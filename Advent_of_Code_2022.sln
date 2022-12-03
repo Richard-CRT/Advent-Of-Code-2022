@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AoCUtilities", "AoCUtilitie
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_1_Calorie_Counting", "Day_1_Calorie_Counting\Day_1_Calorie_Counting.csproj", "{F2512AC9-552A-4178-9F6E-BFDAE618F220}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day_2_Rock_Paper_Scissors", "Day_2_Rock_Paper_Scissors\Day_2_Rock_Paper_Scissors.csproj", "{7B5D20AA-BB9E-4650-A7B7-6D182491B92F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_2_Rock_Paper_Scissors", "Day_2_Rock_Paper_Scissors\Day_2_Rock_Paper_Scissors.csproj", "{7B5D20AA-BB9E-4650-A7B7-6D182491B92F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day_3_Rucksack_Reorganization", "Day_3_Rucksack_Reorganization\Day_3_Rucksack_Reorganization.csproj", "{916583AD-9F46-4F8B-9760-B3454038E233}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{7B5D20AA-BB9E-4650-A7B7-6D182491B92F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B5D20AA-BB9E-4650-A7B7-6D182491B92F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B5D20AA-BB9E-4650-A7B7-6D182491B92F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{916583AD-9F46-4F8B-9760-B3454038E233}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{916583AD-9F46-4F8B-9760-B3454038E233}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{916583AD-9F46-4F8B-9760-B3454038E233}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{916583AD-9F46-4F8B-9760-B3454038E233}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

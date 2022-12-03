@@ -1,5 +1,7 @@
 ﻿using AdventOfCodeUtilities;
 
+List<string> inputList = AoCUtilities.GetInputLines();
+
 void P1()
 {
     int result = 0;
@@ -13,8 +15,6 @@ void P2()
     Console.WriteLine(result);
     Console.ReadLine();
 }
-
-List<string> inputList = AoCUtilities.GetInputLines();
 
 P1();
 P2();
