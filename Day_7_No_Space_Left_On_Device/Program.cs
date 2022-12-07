@@ -71,7 +71,7 @@ void P2()
     int freeSpace = 70000000 - Directory.RootDirectory.GetSize();
     int spaceToDelete = 30000000 - freeSpace;
     List<Directory> orderedDirectories = Directory.AllDirectories.OrderBy(d => d.GetSize()).ToList();
-    Console.WriteLine(orderedDirectories.Find(d => d.GetSize() >= spaceToDelete).GetSize());
+    Console.WriteLine(orderedDirectories.Find(d => d.GetSize() >= spaceToDelete)?.GetSize());
     Console.ReadLine();
 }
 
