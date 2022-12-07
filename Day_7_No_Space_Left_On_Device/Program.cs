@@ -105,12 +105,8 @@ class Directory
     public int GetSize()
     {
         if (SizeCache == null)
-        {
             SizeCache = Files.Values.Sum(f => f.Size) + SubDirectories.Values.Sum(d => d.GetSize());
-            return (int)SizeCache;
-        }
-        else
-            return (int)SizeCache;
+        return (int)SizeCache;
     }
 
     public override string ToString()
