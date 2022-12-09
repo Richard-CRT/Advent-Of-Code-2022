@@ -85,7 +85,7 @@ void P2()
                         buffer[j] = (x, y + 1);
                     else if (prevY - y == -2 && x == prevX)
                         buffer[j] = (x, y - 1);
-                    else if (prevX != x && prevY != y)
+                    else
                     {
                         int xDir = prevX - x > 0 ? 1 : -1;
                         int yDir = prevY - y > 0 ? 1 : -1;
