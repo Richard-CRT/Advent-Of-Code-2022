@@ -92,6 +92,7 @@ public class Monkey
             else
                 Operation = new Func<Int64, Int64>(x => Int64.Parse(operationOperand1) * Int64.Parse(operationOperand2));
         DivisbleTestNum = int.Parse(match.Groups[6].Value);
+        // This is actually overcomplicated - LCM of a set of primes is just the product
         Monkey.LowestCommonDivisor = Monkey.Lcm(Monkey.LowestCommonDivisor, DivisbleTestNum);
         TrueMonkeyId = int.Parse(match.Groups[7].Value);
         FalseMonkeyId = int.Parse(match.Groups[8].Value);
