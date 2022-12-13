@@ -31,6 +31,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_11_Monkey_in_the_Middle
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day_12_Hill_Climbing_Algorithm", "Day_12_Hill_Climbing_Algorithm\Day_12_Hill_Climbing_Algorithm.csproj", "{C35CDD76-B5DC-41E6-8F69-6E2C2DC7C561}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day_13_Distress_Signal", "Day_13_Distress_Signal\Day_13_Distress_Signal.csproj", "{AEE6732D-6ABA-447E-ADA7-A7E70F7FCDAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{C35CDD76-B5DC-41E6-8F69-6E2C2DC7C561}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C35CDD76-B5DC-41E6-8F69-6E2C2DC7C561}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C35CDD76-B5DC-41E6-8F69-6E2C2DC7C561}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEE6732D-6ABA-447E-ADA7-A7E70F7FCDAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEE6732D-6ABA-447E-ADA7-A7E70F7FCDAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEE6732D-6ABA-447E-ADA7-A7E70F7FCDAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEE6732D-6ABA-447E-ADA7-A7E70F7FCDAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
