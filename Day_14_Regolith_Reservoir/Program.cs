@@ -50,8 +50,9 @@ void P1()
         int sandX = 500;
         int sandY = 0;
         Map[(sandX, sandY)] = Cell.Sand;
-        bool rest = false;
-        while (!rest)
+        bool resting = false;
+        bool falling = false;
+        while (!resting && !falling)
         {
             if (Map.GetValueOrDefault((sandX, sandY + 1), Cell.Air) == Cell.Air)
             {
@@ -78,7 +79,7 @@ void P1()
             }
             else
             {
-                rest = true;
+                resting = true;
             }
         }
 
@@ -104,9 +105,8 @@ void P2()
         int sandX = 500;
         int sandY = 0;
         Map[(sandX, sandY)] = Cell.Sand;
-        bool rest = false;
-        bool falling = false;
-        while (!rest && !falling)
+        bool resting = false;
+        while (!resting)
         {
             if (sandY == RockMaxY + 1)
             {
@@ -136,7 +136,7 @@ void P2()
             }
             else
             {
-                rest = true;
+                resting = true;
             }
         }
 
