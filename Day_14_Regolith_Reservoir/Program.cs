@@ -51,8 +51,7 @@ void P1()
         int sandY = 0;
         Map[(sandX, sandY)] = Cell.Sand;
         bool rest = false;
-        bool falling = false;
-        while (!rest && !falling)
+        while (!rest)
         {
             if (Map.GetValueOrDefault((sandX, sandY + 1), Cell.Air) == Cell.Air)
             {
