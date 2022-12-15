@@ -36,7 +36,6 @@ void P2()
 {
     int reg = 1;
     int cycle = 0;
-    int result = 0;
     bool[,] screen = new bool[6, 40];
     foreach (Instruction instruction in Instructions)
     {
