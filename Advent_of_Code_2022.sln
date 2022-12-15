@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_13_Distress_Signal", "D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_14_Regolith_Reservoir", "Day_14_Regolith_Reservoir\Day_14_Regolith_Reservoir.csproj", "{5AF2BC0D-0AC0-4A67-9DC3-7D74B111E722}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day_15_Beacon_Exclusion_Zone", "Day_15_Beacon_Exclusion_Zone\Day_15_Beacon_Exclusion_Zone.csproj", "{54429D42-74D0-4E76-9B27-57B12A99725A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_15_Beacon_Exclusion_Zone", "Day_15_Beacon_Exclusion_Zone\Day_15_Beacon_Exclusion_Zone.csproj", "{54429D42-74D0-4E76-9B27-57B12A99725A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
