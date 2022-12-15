@@ -93,8 +93,8 @@ public class Instruction
     {
         switch (OpCode)
         {
-            case OpCode.noop: return (1, reg); break;
-            case OpCode.addx: return (2, reg + Operand); break;
+            case OpCode.noop: return (1, reg);
+            case OpCode.addx: return (2, reg + Operand);
         }
         throw new NotImplementedException();
     }
