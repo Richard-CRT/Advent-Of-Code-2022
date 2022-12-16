@@ -38,7 +38,7 @@ def new_project(new_project_name):
             print(f"Copying `{src_cs}` to `{dst_cs}`")
             shutil.copyfile(src_cs, dst_cs)
             
-            print(f"Adding new project `{template_project}` to `{sln_file}`")
+            print(f"Adding new project `{new_project_name}` to `{sln_file}`")
             replace_regex = r"(.*Project\s*?\(\"{[^}]+}\"\)\s*?=\s*?\"[^\"]+\"\s*?,\s*?\"[^\"]+\"\s*?,\s*?\"{[^}]+}\"\s*?EndProject)"
             new_sln_contents = re.sub(replace_regex, "\\1" + new_proj_def.replace("\\","\\\\"), sln_contents, 1, re.DOTALL)
             
