@@ -37,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_14_Regolith_Reservoir",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_15_Beacon_Exclusion_Zone", "Day_15_Beacon_Exclusion_Zone\Day_15_Beacon_Exclusion_Zone.csproj", "{54429D42-74D0-4E76-9B27-57B12A99725A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_16_Proboscidea_Volcanium", "Day_16_Proboscidea_Volcanium\Day_16_Proboscidea_Volcanium.csproj", "{7CA09BEC-500D-4686-BFEC-4D51261D9CF1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,10 @@ Global
 		{54429D42-74D0-4E76-9B27-57B12A99725A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54429D42-74D0-4E76-9B27-57B12A99725A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54429D42-74D0-4E76-9B27-57B12A99725A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CA09BEC-500D-4686-BFEC-4D51261D9CF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CA09BEC-500D-4686-BFEC-4D51261D9CF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CA09BEC-500D-4686-BFEC-4D51261D9CF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CA09BEC-500D-4686-BFEC-4D51261D9CF1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
