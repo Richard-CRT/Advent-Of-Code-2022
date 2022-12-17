@@ -144,6 +144,8 @@ void P1_2()
     }
     if (smartHeight != -1)
         Console.WriteLine(smartHeight);
+    else
+        Console.WriteLine("No solution to P2 found");
     Console.ReadLine();
 }
 
