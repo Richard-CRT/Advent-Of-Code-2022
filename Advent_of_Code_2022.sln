@@ -41,6 +41,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_16_Proboscidea_Volcaniu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_17_Pyroclastic_Flow", "Day_17_Pyroclastic_Flow\Day_17_Pyroclastic_Flow.csproj", "{7971B4CC-9E48-48ED-88B2-31817BC891B4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_18_Boiling_Boulders", "Day_18_Boiling_Boulders\Day_18_Boiling_Boulders.csproj", "{8F8DBFCD-B5DF-412E-A83A-11104B824E58}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +125,10 @@ Global
 		{7971B4CC-9E48-48ED-88B2-31817BC891B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7971B4CC-9E48-48ED-88B2-31817BC891B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7971B4CC-9E48-48ED-88B2-31817BC891B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F8DBFCD-B5DF-412E-A83A-11104B824E58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F8DBFCD-B5DF-412E-A83A-11104B824E58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F8DBFCD-B5DF-412E-A83A-11104B824E58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F8DBFCD-B5DF-412E-A83A-11104B824E58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
