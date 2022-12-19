@@ -1,12 +1,11 @@
 ﻿using AdventOfCodeUtilities;
+using System.Numerics;
 using System.Security.Cryptography.X509Certificates;
 
 List<string> inputList = AoCUtilities.GetInputLines();
 Blueprint[] Blueprints = inputList.Select(x => new Blueprint(x)).ToArray();
 
-int MaxGeodesOverall;
-Dictionary<(int, string), int> Cache;
-int recurse(Blueprint blueprint, int maxMinutes, int minute, Stats stats)
+int recurse(ref int MaxGeodesOverall, Dictionary<(int, string), int> Cache, Blueprint blueprint, int maxMinutes, int minute, Stats stats)
 {
     (int, string) cacheKey = (minute, stats.Key());
     if (Cache.ContainsKey(cacheKey))
@@ -44,7 +43,7 @@ int recurse(Blueprint blueprint, int maxMinutes, int minute, Stats stats)
             newStats.Ore -= blueprint.GeodeRobot_Ore;
             newStats.Obsidian -= blueprint.GeodeRobot_Obsidian;
             newStats.GeodeRobots++;
-            ret = Math.Max(ret, recurse(blueprint, maxMinutes, minute + 1, newStats));
+            ret = Math.Max(ret, recurse(ref MaxGeodesOverall, Cache, blueprint, maxMinutes, minute + 1, newStats));
         }
         else
         {
@@ -55,7 +54,7 @@ int recurse(Blueprint blueprint, int maxMinutes, int minute, Stats stats)
                 newStats.Ore -= blueprint.ObsidianRobot_Ore;
                 newStats.Clay -= blueprint.ObsidianRobot_Clay;
                 newStats.ObsidianRobots++;
-                ret = Math.Max(ret, recurse(blueprint, maxMinutes, minute + 1, newStats));
+                ret = Math.Max(ret, recurse(ref MaxGeodesOverall, Cache, blueprint, maxMinutes, minute + 1, newStats));
             }
             else
                 canAffordAll = false;
@@ -64,7 +63,7 @@ int recurse(Blueprint blueprint, int maxMinutes, int minute, Stats stats)
                 Stats newStats = stats.Copy();
                 newStats.Ore -= blueprint.ClayRobot_Ore;
                 newStats.ClayRobots++;
-                ret = Math.Max(ret, recurse(blueprint, maxMinutes, minute + 1, newStats));
+                ret = Math.Max(ret, recurse(ref MaxGeodesOverall, Cache, blueprint, maxMinutes, minute + 1, newStats));
             }
             else
                 canAffordAll = false;
@@ -73,14 +72,14 @@ int recurse(Blueprint blueprint, int maxMinutes, int minute, Stats stats)
                 Stats newStats = stats.Copy();
                 newStats.Ore -= blueprint.OreRobot_Ore;
                 newStats.OreRobots++;
-                ret = Math.Max(ret, recurse(blueprint, maxMinutes, minute + 1, newStats));
+                ret = Math.Max(ret, recurse(ref MaxGeodesOverall, Cache, blueprint, maxMinutes, minute + 1, newStats));
             }
             else
                 canAffordAll = false;
             // Make sure to allow for saving resources to build more expensive robots, but no point in doing this
             //   if we can afford all of the robots, as it's just a waste of CPU at the point
             if (!canAffordAll)
-                ret = Math.Max(ret, recurse(blueprint, maxMinutes, minute + 1, stats.Copy()));
+                ret = Math.Max(ret, recurse(ref MaxGeodesOverall, Cache, blueprint, maxMinutes, minute + 1, stats.Copy()));
         }
     }
     else
@@ -96,16 +95,15 @@ int recurse(Blueprint blueprint, int maxMinutes, int minute, Stats stats)
 void P1()
 {
     int sum = 0;
-    for (int i = 0; i < Blueprints.Count(); i++)
+    int complete = 0;
+    Parallel.ForEach(Blueprints, b =>
     {
-        Console.WriteLine($"{((100.0 * i) / Blueprints.Count()):0.##}%");
-        Blueprint blueprint = Blueprints[i];
-        MaxGeodesOverall = 0;
-        Cache = new Dictionary<(int, string), int>();
-        int max = recurse(blueprint, 24, 0, new Stats(0, 0, 0, 0, 1, 0, 0, 0));
-        sum += blueprint.ID * max;
-    }
-    Console.WriteLine($"100%");
+        int MaxGeodesOverall = 0;
+        int max = recurse(ref MaxGeodesOverall, new Dictionary<(int, string), int>(), b, 24, 0, new Stats(0, 0, 0, 0, 1, 0, 0, 0));
+        sum += b.ID * max;
+        complete++;
+        Console.WriteLine($"{((100.0 * complete) / Blueprints.Count()):0.##}%");
+    });
     Console.WriteLine(sum);
     Console.ReadLine();
 }
@@ -113,16 +111,15 @@ void P1()
 void P2()
 {
     int product = 1;
-    for (int i = 0; i < 3; i++)
+    int complete = 0;
+    Parallel.ForEach(Blueprints.Take(3), b =>
     {
-        Console.WriteLine($"{((100.0 * i) / 3):0.##}%");
-        Blueprint blueprint = Blueprints[i];
-        MaxGeodesOverall = 0;
-        Cache = new Dictionary<(int, string), int>();
-        int max = recurse(blueprint, 32, 0, new Stats(0, 0, 0, 0, 1, 0, 0, 0));
+        int MaxGeodesOverall = 0;
+        int max = recurse(ref MaxGeodesOverall, new Dictionary<(int, string), int>(), b, 32, 0, new Stats(0, 0, 0, 0, 1, 0, 0, 0));
         product *= max;
-    }
-    Console.WriteLine($"100%");
+        complete++;
+        Console.WriteLine($"{((100.0 * complete) / 3):0.##}%");
+    });
     Console.WriteLine(product);
     Console.ReadLine();
 }
