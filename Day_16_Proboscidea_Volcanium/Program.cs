@@ -104,12 +104,15 @@ List<(List<Valve>, HashSet<string>, int)> recurseList(HashSet<string> unvisitedV
             List<(List<Valve>, HashSet<string>, int)> trial = recurseList(unvisitedValves: unvisitedValvesCopy, minutesRemaining: newMinutesRemaining, currentValve: unvisitedValve);
             foreach ((List<Valve> l, HashSet<string> h, int release) in trial)
             {
+                // Have to make copy here, or we end up modifying the cache which is bad!
+                List<Valve> lCopy = new List<Valve>(l);
+                HashSet<string> hCopy = new HashSet<string>(h);
                 if (currentValve.ID != "AA")
                 {
-                    l.Insert(0, currentValve);
-                    h.Add(currentValve.ID);
+                    lCopy.Insert(0, currentValve);
+                    hCopy.Add(currentValve.ID);
                 }
-                paths.Add((l, h, releaseByThisValve + release));
+                paths.Add((lCopy, hCopy, releaseByThisValve + release));
             }
         }
     }
@@ -136,6 +139,8 @@ void P2()
     unvisitedValves.Remove("AA");
     HashSet<string> unvisitedValvesCopy = new HashSet<string>(unvisitedValves);
     int maxRelease = 0;
+    List<Valve> bestYPath = new List<Valve>();
+    List<Valve> bestEPath = new List<Valve>();
     List<(List<Valve>, HashSet<string>, int)> paths = recurseList(unvisitedValves: unvisitedValvesCopy, minutesRemaining: 26, currentValve: Valve.Valves["AA"]);
     int onePerc = paths.Count / 100;
     for (int i = 0; i < paths.Count; i++)
@@ -163,12 +168,20 @@ void P2()
                     if (!intersect)
                     {
                         if (trial > maxRelease)
+                        {
                             maxRelease = trial;
+                            bestYPath = yPath;
+                            bestEPath = ePath;
+                        }
                     }
                 }
             }
         }
     }
+    bestYPath.Insert(0, Valve.Valves["AA"]);
+    bestEPath.Insert(0, Valve.Valves["AA"]);
+    //Console.WriteLine(string.Join(", ", bestYPath));
+    //Console.WriteLine(string.Join(", ", bestEPath));
     Console.WriteLine(maxRelease);
     Console.ReadLine();
 }
