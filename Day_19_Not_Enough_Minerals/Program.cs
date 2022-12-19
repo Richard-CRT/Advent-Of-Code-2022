@@ -4,21 +4,29 @@ using System.Security.Cryptography.X509Certificates;
 List<string> inputList = AoCUtilities.GetInputLines();
 Blueprint[] Blueprints = inputList.Select(x => new Blueprint(x)).ToArray();
 
-Dictionary<int, int> MaxGeodesAtMinute;
+int MaxGeodesOverall;
 Dictionary<(int, string), int> Cache;
 int recurse(Blueprint blueprint, int maxMinutes, int minute, Stats stats)
 {
-    //if (MaxGeodesAtMinute.ContainsKey(minute) && MaxGeodesAtMinute[minute] > stats.Geodes)
-    //    return 0;
-    MaxGeodesAtMinute[minute] = stats.Geodes;
-
     (int, string) cacheKey = (minute, stats.Key());
     if (Cache.ContainsKey(cacheKey))
         return Cache[cacheKey];
 
-    int ret;
+    int ret = int.MinValue;
     if (minute < maxMinutes)
     {
+        // how many geodes would we get if we make a geode robot every remaining minute
+        // prune if we can't possibly beat the currently found maximum
+        int remainingMinutes = maxMinutes - minute;
+        int maximumAdditionalGeodeRobots = remainingMinutes;
+        int n = (maximumAdditionalGeodeRobots - 1) + stats.GeodeRobots;
+        int maximumAdditionalGeodes = ((n * n) + n) / 2;
+        if (stats.Geodes + maximumAdditionalGeodes < MaxGeodesOverall)
+        {
+            // Not possible to make enough geodes to beat our current maximum
+            return 0;
+        }
+
         Stats prevStats = stats.Copy();
 
         stats.Ore += stats.OreRobots;
@@ -26,57 +34,60 @@ int recurse(Blueprint blueprint, int maxMinutes, int minute, Stats stats)
         stats.Obsidian += stats.ObsidianRobots;
         stats.Geodes += stats.GeodeRobots;
 
-        List<Stats> possibleStats = new List<Stats>();
-        bool canAffordAll = true;
-        if (prevStats.Ore >= blueprint.OreRobot_Ore && prevStats.OreRobots < blueprint.MaxRobot_Ore)
-        {
-            Stats newStats = stats.Copy();
-            newStats.Ore -= blueprint.OreRobot_Ore;
-            newStats.OreRobots++;
-            possibleStats.Add(newStats);
-        }
-        else
-            canAffordAll = false;
-        if (prevStats.Ore >= blueprint.ClayRobot_Ore && prevStats.ClayRobots < blueprint.ObsidianRobot_Clay)
-        {
-            Stats newStats = stats.Copy();
-            newStats.Ore -= blueprint.ClayRobot_Ore;
-            newStats.ClayRobots++;
-            possibleStats.Add(newStats);
-        }
-        else
-            canAffordAll = false;
-        if (prevStats.Ore >= blueprint.ObsidianRobot_Ore && prevStats.Clay >= blueprint.ObsidianRobot_Clay && prevStats.ObsidianRobots < blueprint.GeodeRobot_Obsidian)
-        {
-            Stats newStats = stats.Copy();
-            newStats.Ore -= blueprint.ObsidianRobot_Ore;
-            newStats.Clay -= blueprint.ObsidianRobot_Clay;
-            newStats.ObsidianRobots++;
-            possibleStats.Add(newStats);
-        }
-        else
-            canAffordAll = false;
+        // If we can make a geode robot, do it - it will always be beneficial to make geode robots earlier
+        // Additionally, we should never build any robot where we would be producing surplus e.g. no point in having more
+        //   Obsidian robots than the obsidian cost of a Geode robot, and no point in having more Ore robots than the
+        //   maximum ore cost of any of the robots, as we'll get n per turn, and consume a maximum of n per turn
         if (prevStats.Ore >= blueprint.GeodeRobot_Ore && prevStats.Obsidian >= blueprint.GeodeRobot_Obsidian)
         {
             Stats newStats = stats.Copy();
             newStats.Ore -= blueprint.GeodeRobot_Ore;
             newStats.Obsidian -= blueprint.GeodeRobot_Obsidian;
             newStats.GeodeRobots++;
-            possibleStats.Add(newStats);
+            ret = Math.Max(ret, recurse(blueprint, maxMinutes, minute + 1, newStats));
         }
         else
-            canAffordAll = false;
-        if (!canAffordAll)
-            possibleStats.Add(stats.Copy());
-
-        if (possibleStats.Count == 0)
-            throw new NotImplementedException();
-
-        ret = possibleStats.Select(pS => recurse(blueprint, maxMinutes, minute + 1, pS.Copy())).Max();
+        {
+            bool canAffordAll = true;
+            if (prevStats.Ore >= blueprint.ObsidianRobot_Ore && prevStats.Clay >= blueprint.ObsidianRobot_Clay && prevStats.ObsidianRobots < blueprint.GeodeRobot_Obsidian)
+            {
+                Stats newStats = stats.Copy();
+                newStats.Ore -= blueprint.ObsidianRobot_Ore;
+                newStats.Clay -= blueprint.ObsidianRobot_Clay;
+                newStats.ObsidianRobots++;
+                ret = Math.Max(ret, recurse(blueprint, maxMinutes, minute + 1, newStats));
+            }
+            else
+                canAffordAll = false;
+            if (prevStats.Ore >= blueprint.ClayRobot_Ore && prevStats.ClayRobots < blueprint.ObsidianRobot_Clay)
+            {
+                Stats newStats = stats.Copy();
+                newStats.Ore -= blueprint.ClayRobot_Ore;
+                newStats.ClayRobots++;
+                ret = Math.Max(ret, recurse(blueprint, maxMinutes, minute + 1, newStats));
+            }
+            else
+                canAffordAll = false;
+            if (prevStats.Ore >= blueprint.OreRobot_Ore && prevStats.OreRobots < blueprint.MaxRobot_Ore)
+            {
+                Stats newStats = stats.Copy();
+                newStats.Ore -= blueprint.OreRobot_Ore;
+                newStats.OreRobots++;
+                ret = Math.Max(ret, recurse(blueprint, maxMinutes, minute + 1, newStats));
+            }
+            else
+                canAffordAll = false;
+            // Make sure to allow for saving resources to build more expensive robots, but no point in doing this
+            //   if we can afford all of the robots, as it's just a waste of CPU at the point
+            if (!canAffordAll)
+                ret = Math.Max(ret, recurse(blueprint, maxMinutes, minute + 1, stats.Copy()));
+        }
     }
     else
     {
         ret = stats.Geodes;
+        if (ret > MaxGeodesOverall)
+            MaxGeodesOverall = ret;
     }
     Cache[cacheKey] = ret;
     return ret;
@@ -87,14 +98,14 @@ void P1()
     int sum = 0;
     for (int i = 0; i < Blueprints.Count(); i++)
     {
+        Console.WriteLine($"{((100.0 * i) / Blueprints.Count()):0.##}%");
         Blueprint blueprint = Blueprints[i];
-        Console.WriteLine(blueprint.ID);
-        MaxGeodesAtMinute = new Dictionary<int, int>();
+        MaxGeodesOverall = 0;
         Cache = new Dictionary<(int, string), int>();
         int max = recurse(blueprint, 24, 0, new Stats(0, 0, 0, 0, 1, 0, 0, 0));
-        Console.WriteLine(max);
         sum += blueprint.ID * max;
     }
+    Console.WriteLine($"100%");
     Console.WriteLine(sum);
     Console.ReadLine();
 }
@@ -104,14 +115,14 @@ void P2()
     int product = 1;
     for (int i = 0; i < 3; i++)
     {
+        Console.WriteLine($"{((100.0 * i) / 3):0.##}%");
         Blueprint blueprint = Blueprints[i];
-        Console.WriteLine(blueprint.ID);
-        MaxGeodesAtMinute = new Dictionary<int, int>();
+        MaxGeodesOverall = 0;
         Cache = new Dictionary<(int, string), int>();
         int max = recurse(blueprint, 32, 0, new Stats(0, 0, 0, 0, 1, 0, 0, 0));
-        Console.WriteLine(max);
         product *= max;
     }
+    Console.WriteLine($"100%");
     Console.WriteLine(product);
     Console.ReadLine();
 }
