@@ -4,15 +4,20 @@ using System.Security.Cryptography.X509Certificates;
 List<string> inputList = AoCUtilities.GetInputLines();
 Blueprint[] Blueprints = inputList.Select(x => new Blueprint(x)).ToArray();
 
-Dictionary<(int, string), int> Cache = new Dictionary<(int, string), int>();
-int recurse(Blueprint blueprint, int minute, Stats stats)
+Dictionary<int, int> MaxGeodesAtMinute;
+Dictionary<(int, string), int> Cache;
+int recurse(Blueprint blueprint, int maxMinutes, int minute, Stats stats)
 {
+    //if (MaxGeodesAtMinute.ContainsKey(minute) && MaxGeodesAtMinute[minute] > stats.Geodes)
+    //    return 0;
+    MaxGeodesAtMinute[minute] = stats.Geodes;
+
     (int, string) cacheKey = (minute, stats.Key());
     if (Cache.ContainsKey(cacheKey))
         return Cache[cacheKey];
 
     int ret;
-    if (minute < 24)
+    if (minute < maxMinutes)
     {
         Stats prevStats = stats.Copy();
 
@@ -23,7 +28,7 @@ int recurse(Blueprint blueprint, int minute, Stats stats)
 
         List<Stats> possibleStats = new List<Stats>();
         bool canAffordAll = true;
-        if (prevStats.Ore >= blueprint.OreRobot_Ore)
+        if (prevStats.Ore >= blueprint.OreRobot_Ore && prevStats.OreRobots < blueprint.MaxRobot_Ore)
         {
             Stats newStats = stats.Copy();
             newStats.Ore -= blueprint.OreRobot_Ore;
@@ -32,7 +37,7 @@ int recurse(Blueprint blueprint, int minute, Stats stats)
         }
         else
             canAffordAll = false;
-        if (prevStats.Ore >= blueprint.ClayRobot_Ore)
+        if (prevStats.Ore >= blueprint.ClayRobot_Ore && prevStats.ClayRobots < blueprint.ObsidianRobot_Clay)
         {
             Stats newStats = stats.Copy();
             newStats.Ore -= blueprint.ClayRobot_Ore;
@@ -41,7 +46,7 @@ int recurse(Blueprint blueprint, int minute, Stats stats)
         }
         else
             canAffordAll = false;
-        if (prevStats.Ore >= blueprint.ObsidianRobot_Ore && prevStats.Clay >= blueprint.ObsidianRobot_Clay)
+        if (prevStats.Ore >= blueprint.ObsidianRobot_Ore && prevStats.Clay >= blueprint.ObsidianRobot_Clay && prevStats.ObsidianRobots < blueprint.GeodeRobot_Obsidian)
         {
             Stats newStats = stats.Copy();
             newStats.Ore -= blueprint.ObsidianRobot_Ore;
@@ -67,7 +72,7 @@ int recurse(Blueprint blueprint, int minute, Stats stats)
         if (possibleStats.Count == 0)
             throw new NotImplementedException();
 
-        ret = possibleStats.Select(pS => recurse(blueprint, minute + 1, pS)).Max();
+        ret = possibleStats.Select(pS => recurse(blueprint, maxMinutes, minute + 1, pS.Copy())).Max();
     }
     else
     {
@@ -79,19 +84,35 @@ int recurse(Blueprint blueprint, int minute, Stats stats)
 
 void P1()
 {
-    foreach (Blueprint blueprint in Blueprints)
+    int sum = 0;
+    for (int i = 0; i < Blueprints.Count(); i++)
     {
-        Console.WriteLine(blueprint.Total_GeodeRobot_Ore);
-
+        Blueprint blueprint = Blueprints[i];
+        Console.WriteLine(blueprint.ID);
+        MaxGeodesAtMinute = new Dictionary<int, int>();
+        Cache = new Dictionary<(int, string), int>();
+        int max = recurse(blueprint, 24, 0, new Stats(0, 0, 0, 0, 1, 0, 0, 0));
+        Console.WriteLine(max);
+        sum += blueprint.ID * max;
     }
-    //Console.WriteLine(recurse(Blueprints[0], 0, new Stats(0, 0, 0, 0, 1, 0, 0, 0)));
+    Console.WriteLine(sum);
     Console.ReadLine();
 }
 
 void P2()
 {
-    int result = 0;
-    Console.WriteLine(result);
+    int product = 1;
+    for (int i = 0; i < 3; i++)
+    {
+        Blueprint blueprint = Blueprints[i];
+        Console.WriteLine(blueprint.ID);
+        MaxGeodesAtMinute = new Dictionary<int, int>();
+        Cache = new Dictionary<(int, string), int>();
+        int max = recurse(blueprint, 32, 0, new Stats(0, 0, 0, 0, 1, 0, 0, 0));
+        Console.WriteLine(max);
+        product *= max;
+    }
+    Console.WriteLine(product);
     Console.ReadLine();
 }
 
@@ -144,6 +165,8 @@ public class Blueprint
     public int GeodeRobot_Ore;
     public int GeodeRobot_Obsidian;
 
+    public int MaxRobot_Ore;
+
     public int Total_ObsidianRobot_Ore;
     public int Total_GeodeRobot_Ore;
 
@@ -158,6 +181,8 @@ public class Blueprint
         ObsidianRobot_Clay = int.Parse(split[21]);
         GeodeRobot_Ore = int.Parse(split[27]);
         GeodeRobot_Obsidian = int.Parse(split[30]);
+
+        MaxRobot_Ore = (new int[] { OreRobot_Ore, ClayRobot_Ore, ObsidianRobot_Ore, GeodeRobot_Ore }).Max();
 
         Total_ObsidianRobot_Ore = ObsidianRobot_Ore + ObsidianRobot_Clay * ClayRobot_Ore;
         Total_GeodeRobot_Ore = GeodeRobot_Ore + GeodeRobot_Obsidian * Total_ObsidianRobot_Ore;
