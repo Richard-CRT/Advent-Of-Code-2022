@@ -30,11 +30,7 @@ for (int i = 1; i <= Nodes2.Count - 2; i++)
     Nodes2[i].Previous = Nodes2[i - 1];
     Nodes2[i].Next = Nodes2[i + 1];
 }
-
-foreach (Node node in Nodes2)
-{
-    node.Value = node.Value * 811589153;
-}
+Nodes2.ForEach(x => x.Value *= 811589153);
 
 void P1()
 {
