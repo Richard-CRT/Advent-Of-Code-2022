@@ -102,7 +102,7 @@ public class Node
             this.Previous.Next = this.Next;
             this.Next.Previous = this.Previous;
 
-            Node n = Get(hops, len - 1);
+            Node n = Get(hops, len - 1); // Must mod by 1 less than count when shifting
 
             this.Next = n.Next;
             this.Previous = n;
@@ -115,7 +115,7 @@ public class Node
             this.Previous.Next = this.Next;
             this.Next.Previous = this.Previous;
 
-            Node n = Get(hops, len - 1);
+            Node n = Get(hops, len - 1); // Must mod by 1 less than count when shifting
 
             this.Next = n;
             this.Previous = n.Previous;
