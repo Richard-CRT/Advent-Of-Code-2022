@@ -7,23 +7,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemplateProject", "Template
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AoCUtilities", "AoCUtilities\AoCUtilities.csproj", "{A33E73EE-AD43-4AE7-8074-8F981ED807FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_1_Calorie_Counting", "Day_1_Calorie_Counting\Day_1_Calorie_Counting.csproj", "{F2512AC9-552A-4178-9F6E-BFDAE618F220}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_01_Calorie_Counting", "Day_01_Calorie_Counting\Day_01_Calorie_Counting.csproj", "{F2512AC9-552A-4178-9F6E-BFDAE618F220}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_2_Rock_Paper_Scissors", "Day_2_Rock_Paper_Scissors\Day_2_Rock_Paper_Scissors.csproj", "{7B5D20AA-BB9E-4650-A7B7-6D182491B92F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_02_Rock_Paper_Scissors", "Day_02_Rock_Paper_Scissors\Day_02_Rock_Paper_Scissors.csproj", "{7B5D20AA-BB9E-4650-A7B7-6D182491B92F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_3_Rucksack_Reorganization", "Day_3_Rucksack_Reorganization\Day_3_Rucksack_Reorganization.csproj", "{916583AD-9F46-4F8B-9760-B3454038E233}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_03_Rucksack_Reorganization", "Day_03_Rucksack_Reorganization\Day_03_Rucksack_Reorganization.csproj", "{916583AD-9F46-4F8B-9760-B3454038E233}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_4_Camp_Cleanup", "Day_4_Camp_Cleanup\Day_4_Camp_Cleanup.csproj", "{F3A74EE8-CC62-4CEA-B4F8-61E71EA0B3DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_04_Camp_Cleanup", "Day_04_Camp_Cleanup\Day_04_Camp_Cleanup.csproj", "{F3A74EE8-CC62-4CEA-B4F8-61E71EA0B3DF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_5_Supply_Stacks", "Day_5_Supply_Stacks\Day_5_Supply_Stacks.csproj", "{4973A1A1-D102-4A0F-BC37-898C5515DF05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_05_Supply_Stacks", "Day_05_Supply_Stacks\Day_05_Supply_Stacks.csproj", "{4973A1A1-D102-4A0F-BC37-898C5515DF05}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_6_Tuning_Trouble", "Day_6_Tuning_Trouble\Day_6_Tuning_Trouble.csproj", "{2810092C-8F6D-4A73-A596-B227C60A6FCA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_06_Tuning_Trouble", "Day_06_Tuning_Trouble\Day_06_Tuning_Trouble.csproj", "{2810092C-8F6D-4A73-A596-B227C60A6FCA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_7_No_Space_Left_On_Device", "Day_7_No_Space_Left_On_Device\Day_7_No_Space_Left_On_Device.csproj", "{F40F85B8-1090-4923-B200-02FDC88B694D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_07_No_Space_Left_On_Device", "Day_07_No_Space_Left_On_Device\Day_07_No_Space_Left_On_Device.csproj", "{F40F85B8-1090-4923-B200-02FDC88B694D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_8_Treetop_Tree_House", "Day_8_Treetop_Tree_House\Day_8_Treetop_Tree_House.csproj", "{E279DF56-CAF2-432F-AB80-859D82C916D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_08_Treetop_Tree_House", "Day_08_Treetop_Tree_House\Day_08_Treetop_Tree_House.csproj", "{E279DF56-CAF2-432F-AB80-859D82C916D7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_9_Rope_Bridge", "Day_9_Rope_Bridge\Day_9_Rope_Bridge.csproj", "{9F1EA925-502F-49B0-8876-8951BB8834B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_09_Rope_Bridge", "Day_09_Rope_Bridge\Day_09_Rope_Bridge.csproj", "{9F1EA925-502F-49B0-8876-8951BB8834B7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_10_Cathode-Ray_Tube", "Day_10_Cathode-Ray_Tube\Day_10_Cathode-Ray_Tube.csproj", "{99519ACD-8D8E-4126-AF9E-38633116FC64}"
 EndProject
