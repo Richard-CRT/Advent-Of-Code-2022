@@ -1,14 +1,59 @@
-import urllib.request
+import requests
 import os
 import shutil
 import re
 import uuid
+import json
 
 year = 2022
 sln_file = f"Advent_of_Code_{year}.sln"
 template_project = "TemplateProject"
 
-def new_project(new_project_name):    
+def download_input(url, dst_input):
+    session_filename = "session.json"
+    session_json = {"session": ""}
+
+    new_session = False
+    try:
+        with open(session_filename, 'r') as f:
+            session_json = json.load(f)
+    except (FileNotFoundError, json.decoder.JSONDecodeError):
+        session_json = {}
+        session_json["session"] = input("Enter your session cookie value: ")
+        new_session = True
+    except Exception as err:
+        print(f"Error {type(err).__name__} while reading config.json file")
+        print(err)
+        exit()
+    
+    input_url = f"{url}/input"
+    print(f"Downloading contents for `{dst_input}` from `{input_url}`")
+    try:
+        resp = requests.get(input_url, cookies={"session": session_json["session"]})
+    except Exception as err:
+        print(f"Error downloading input from `{input_url}`, contents not written to `{dst_input}`")
+    else:
+        if resp.status_code == 200:
+            if new_session:
+                r = ""
+                while r != "y" and r != "n":
+                    r = input("Cache session cookie? [Y/n] ").lower()
+                    if r == "":
+                        r = "y"
+                if r == "y":            
+                    print(f"Caching new session cookie")
+                    with open(session_filename, 'w') as f:
+                        json.dump(session_json, f)
+            
+            input_contents = str(resp.text)
+            
+            print(f"Writing input from `{input_url}` to `{dst_input}`")
+            with open(dst_input, 'w') as file:
+                file.write(input_contents)
+        else:
+            print(f"HTTP error code `{resp.status_code}` when attempting to read input (indicates invalid session cookie)")
+
+def new_project(url, new_project_name):    
     try:
         with open(sln_file, 'r') as file:
             sln_contents = file.read()
@@ -43,7 +88,9 @@ def new_project(new_project_name):
             new_sln_contents = re.sub(replace_regex, "\\1" + new_proj_def.replace("\\","\\\\"), sln_contents, 1, re.DOTALL)
             
             with open(sln_file, 'w') as file:
-                sln_contents = file.write(new_sln_contents)
+                file.write(new_sln_contents)
+            
+            download_input(url, dst_input)
         else:
             print(f"Project with title `{template_project}` not found in `{sln_file}`")
 
@@ -51,13 +98,14 @@ def main():
     while True:
         day = int(input("Day: "))
         url = f"https://adventofcode.com/{year}/day/{day}"
+        print(f"Fetching HTML from `{url}`")
         try:
-            http_response = urllib.request.urlopen(url)
-        except urllib.error.HTTPError:
+            resp = requests.get(url)
+        except Exception as err:
             continue
         else:
             break
-    html = str(http_response.read())
+    html = str(resp.text)
     open_del = "<h2>--- "
     close_del = " ---</h2>"
     open_h2 = html.index(open_del)
@@ -85,6 +133,6 @@ def main():
     if (os.path.exists(r)):
         print(f"Directory `{r}` already exists")
     else:
-        new_project(r)
+        new_project(url, r)
 
 main()
