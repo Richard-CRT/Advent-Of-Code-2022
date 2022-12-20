@@ -4,47 +4,22 @@ import shutil
 import re
 import uuid
 import json
+import browser_cookie3
 
 year = 2022
 sln_file = f"Advent_of_Code_{year}.sln"
 template_project = "TemplateProject"
 
-def download_input(url, dst_input):
-    session_filename = "private_session.json"
-    session_json = {"session": ""}
-
-    new_session = False
-    try:
-        with open(session_filename, 'r') as f:
-            session_json = json.load(f)
-    except (FileNotFoundError, json.decoder.JSONDecodeError):
-        session_json = {}
-        session_json["session"] = input("Enter your session cookie value: ")
-        new_session = True
-    except Exception as err:
-        print(f"Error {type(err).__name__} while reading config.json file")
-        print(err)
-        exit()
-    
+def download_input(url, dst_input):    
     input_url = f"{url}/input"
     print(f"Downloading contents for `{dst_input}` from `{input_url}`")
     try:
-        resp = requests.get(input_url, cookies={"session": session_json["session"]})
+        cj = browser_cookie3.load(domain_name='adventofcode.com')
+        resp = requests.get(input_url, cookies=cj)
     except Exception as err:
         print(f"Error downloading input from `{input_url}`, contents not written to `{dst_input}`")
     else:
-        if resp.status_code == 200:
-            if new_session:
-                r = ""
-                while r != "y" and r != "n":
-                    r = input("Cache session cookie? [Y/n] ").lower()
-                    if r == "":
-                        r = "y"
-                if r == "y":            
-                    print(f"Caching new session cookie")
-                    with open(session_filename, 'w') as f:
-                        json.dump(session_json, f)
-            
+        if resp.status_code == 200:            
             input_contents = str(resp.text)
             
             print(f"Writing input from `{input_url}` to `{dst_input}`")
