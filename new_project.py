@@ -10,7 +10,7 @@ sln_file = f"Advent_of_Code_{year}.sln"
 template_project = "TemplateProject"
 
 def download_input(url, dst_input):
-    session_filename = "session.json"
+    session_filename = "private_session.json"
     session_json = {"session": ""}
 
     new_session = False
