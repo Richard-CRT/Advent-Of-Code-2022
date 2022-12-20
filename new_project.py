@@ -65,6 +65,7 @@ def main():
     title = html[open_h2 + len(open_del):close_h2]
     print(f"Original title is `{title}`")
     renamed_title = title.replace(":", "").replace(" ", "_")
+    renamed_title = re.sub(r"Day_(\d_.+)", "Day_0\\1", renamed_title, 1)
     print(f"Suggested project title is `{renamed_title}`")
     r = ""
     while r != "y" and r != "n":
@@ -72,10 +73,11 @@ def main():
         if r == "":
             r = "y"
     if r == "n":
+        day_string = f"{day:02}"
         r = ""
         while r == "":
-            r = input(f"What should the new project be called? Day_{day}_")
-        r = f"Day_{day}_{r}"
+            r = input(f"What should the new project be called? Day_{day_string}_")
+        r = f"Day_{day_string}_{r}"
     else:
         r = renamed_title
     print(f"Using project name `{r}`")
