@@ -149,6 +149,7 @@ void P1_2()
     Console.ReadLine();
 }
 
+#pragma warning disable CS8321 // Local function is declared but never used
 void Print(Dictionary<(int, int), Cell> fallingPiece, int fallingPieceLeftEdgeX, int fallingPieceLowerEdgeY)
 {
     for (int y = Height + 3 + 5; y >= 0; y--)
@@ -174,6 +175,7 @@ void Print(Dictionary<(int, int), Cell> fallingPiece, int fallingPieceLeftEdgeX,
     }
     Console.ReadLine();
 }
+#pragma warning restore CS8321 // Local function is declared but never used
 
 P1_2();
 
