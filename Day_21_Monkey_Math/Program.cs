@@ -1,4 +1,6 @@
-﻿using AdventOfCodeUtilities;
+﻿// 09:50
+
+using AdventOfCodeUtilities;
 using System.Text.RegularExpressions;
 
 List<string> inputList = AoCUtilities.GetInputLines();
@@ -14,6 +16,14 @@ void P1()
 
 void P2()
 {
+    Monkey m = Monkey.AllMonkeys["humn"]; ;
+    while (m.Parent != null)
+    {
+        m.Parent.HumanPathMonkey = m;
+        m.Parent.NonHumanPathMonkey = m == m.Parent.Monkey1 ? m.Parent.Monkey2 : m.Parent.Monkey1;
+        m = m.Parent;
+    }
+
     if (RootMonkey.HumanPathMonkey != null && RootMonkey.NonHumanPathMonkey != null)
     {
         Int64 RootHumanPartMustBe = RootMonkey.NonHumanPathMonkey.Yell();
