@@ -92,6 +92,7 @@ foreach (var kvp in Sides)
     }
 }
 
+List<(Side, Direction, Side, Direction)> relations = new List<(Side, Direction, Side, Direction)>();
 // Preprocess the easy part 2 wrapping where the adjacent sides are already there
 foreach (var kvp in Sides)
 {
@@ -99,30 +100,20 @@ foreach (var kvp in Sides)
     Side side = kvp.Value;
 
     if (Sides.ContainsKey((xCoord - 1, yCoord)))
-    {
-        for (int y = 0; y < Side.Dim; y++)
-            side.P2WrapKey[(-1, y)] = (Sides[(xCoord - 1, yCoord)], Side.Dim - 1, y, Direction.Left);
-    }
+        relations.Add((side, Direction.Left, Sides[(xCoord - 1, yCoord)], Direction.Right));
+
     if (Sides.ContainsKey((xCoord + 1, yCoord)))
-    {
-        for (int y = 0; y < Side.Dim; y++)
-            side.P2WrapKey[(Side.Dim, y)] = (Sides[(xCoord + 1, yCoord)], 0, y, Direction.Right);
-    }
+        relations.Add((side, Direction.Right, Sides[(xCoord + 1, yCoord)], Direction.Left));
+
     if (Sides.ContainsKey((xCoord, yCoord - 1)))
-    {
-        for (int x = 0; x < Side.Dim; x++)
-            side.P2WrapKey[(x, -1)] = (Sides[(xCoord, yCoord - 1)], x, Side.Dim - 1, Direction.Up);
-    }
+        relations.Add((side, Direction.Up, Sides[(xCoord, yCoord - 1)], Direction.Down));
+
     if (Sides.ContainsKey((xCoord, yCoord + 1)))
-    {
-        for (int x = 0; x < Side.Dim; x++)
-            side.P2WrapKey[(x, Side.Dim)] = (Sides[(xCoord, yCoord + 1)], x, 0, Direction.Down);
-    }
+        relations.Add((side, Direction.Down, Sides[(xCoord, yCoord + 1)], Direction.Up));
 }
 
-
 #if EXAMPLE
-List<(Side, Direction, Side, Direction)> relations = new List<(Side, Direction, Side, Direction)>()
+relations.AddRange(new List<(Side, Direction, Side, Direction)>()
 {
     (Sides[(2,0)], Direction.Left, Sides[(1,1)], Direction.Up),
     (Sides[(2,0)], Direction.Up, Sides[(0,1)], Direction.Up),
@@ -131,9 +122,9 @@ List<(Side, Direction, Side, Direction)> relations = new List<(Side, Direction, 
     (Sides[(0,1)], Direction.Down, Sides[(2,2)], Direction.Down),
     (Sides[(2,2)], Direction.Left, Sides[(1,1)], Direction.Down),
     (Sides[(2,1)], Direction.Right, Sides[(3,2)], Direction.Up),
-};
+});
 #else
-List<(Side, Direction, Side, Direction)> relations = new List<(Side, Direction, Side, Direction)>()
+relations.AddRange(new List<(Side, Direction, Side, Direction)>()
 {
     (Sides[(1,1)], Direction.Left, Sides[(0,2)], Direction.Up),
     (Sides[(1,1)], Direction.Right, Sides[(2,0)], Direction.Down),
@@ -142,7 +133,7 @@ List<(Side, Direction, Side, Direction)> relations = new List<(Side, Direction, 
     (Sides[(0,2)], Direction.Left, Sides[(1,0)], Direction.Left),
     (Sides[(0,3)], Direction.Left, Sides[(1,0)], Direction.Up),
     (Sides[(0,3)], Direction.Down, Sides[(2,0)], Direction.Up),
-};
+});
 #endif
 
 // Preprocess the complex part 2 wrapping which requires knowledge of the input
@@ -430,5 +421,15 @@ public class Side
     public override string ToString()
     {
         return $"{X},{Y}";
+    }
+}
+
+public class BasicSide
+{
+    public Dictionary<Direction, BasicSide> AdjacentSides = new Dictionary<Direction, BasicSide>();
+
+    public BasicSide()
+    {
+
     }
 }
