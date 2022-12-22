@@ -361,11 +361,6 @@ public enum Cell
     Space = '░',
 }
 
-public enum RelationType
-{
-    LeftToUp
-}
-
 public class Side
 {
     public static int Dim;
