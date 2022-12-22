@@ -3,6 +3,8 @@
 //#define EXAMPLE
 
 using AdventOfCodeUtilities;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Text.RegularExpressions;
 
@@ -25,11 +27,14 @@ foreach (Match m in mc)
         Distances.Add(int.Parse(s));
 }
 
-#if EXAMPLE
-Side.Dim = 4;
-#else
-Side.Dim = 50;
-#endif
+// Determine the side dimension
+Side.Dim = int.MaxValue;
+for (int i = 0; i < emptyLineIndex; i++)
+{
+    int trialLength = inputList[i].Trim().Length;
+    if (trialLength < Side.Dim)
+        Side.Dim = trialLength;
+}
 
 Dictionary<(int, int), Side> Sides = new Dictionary<(int, int), Side>();
 
@@ -93,7 +98,7 @@ foreach (var kvp in Sides)
 }
 
 List<(Side, Direction, Side, Direction)> relations = new List<(Side, Direction, Side, Direction)>();
-// Preprocess the easy part 2 wrapping where the adjacent sides are already there
+// Preprocess the easy part 2 wrappings where the adjacent sides are already there
 foreach (var kvp in Sides)
 {
     (int xCoord, int yCoord) = kvp.Key;
@@ -112,31 +117,311 @@ foreach (var kvp in Sides)
         relations.Add((side, Direction.Down, Sides[(xCoord, yCoord + 1)], Direction.Up));
 }
 
-#if EXAMPLE
-relations.AddRange(new List<(Side, Direction, Side, Direction)>()
+// Technically speaking the input cube net is the same for everyone
+// so not necessary to be completely agnostic to cube net
+List<(int[,], List<(int, int, Direction, int, int, Direction)>)> validCubeNets = new List<(int[,], List<(int, int, Direction, int, int, Direction)>)>();
+validCubeNets.AddRange(new List<(int[,], List<(int, int, Direction, int, int, Direction)>)>
 {
-    (Sides[(2,0)], Direction.Left, Sides[(1,1)], Direction.Up),
-    (Sides[(2,0)], Direction.Up, Sides[(0,1)], Direction.Up),
-    (Sides[(2,0)], Direction.Right, Sides[(3,2)], Direction.Right),
-    (Sides[(0,1)], Direction.Left, Sides[(3,2)], Direction.Down),
-    (Sides[(0,1)], Direction.Down, Sides[(2,2)], Direction.Down),
-    (Sides[(2,2)], Direction.Left, Sides[(1,1)], Direction.Down),
-    (Sides[(2,1)], Direction.Right, Sides[(3,2)], Direction.Up),
+    (new int[,]
+    {
+        { 1, 1, 1 },
+        { 0, 1, 0 },
+        { 0, 1, 0 },
+        { 0, 1, 0 },
+    }, new List<(int, int, Direction, int, int, Direction)> {
+        (1, 0, Direction.Up, 1, 3, Direction.Down),
+        (0, 0, Direction.Left, 1, 2, Direction.Left),
+        (2, 0, Direction.Right, 1, 2, Direction.Right),
+        (0, 0, Direction.Up, 1, 3, Direction.Left),
+        (2, 0, Direction.Up, 1, 3, Direction.Right),
+        (0, 0, Direction.Down, 1, 1, Direction.Left),
+        (2, 0, Direction.Down, 1, 1, Direction.Right),
+    }),
+    (new int[,]
+    {
+        { 1, 1, 0 },
+        { 0, 1, 1 },
+        { 0, 1, 0 },
+        { 0, 1, 0 },
+    }, new List<(int, int, Direction, int, int, Direction)> {
+        (1, 0, Direction.Up, 1, 3, Direction.Down),
+        (0, 0, Direction.Left, 1, 2, Direction.Left),
+        (0, 0, Direction.Up, 1, 3, Direction.Left),
+        (0, 0, Direction.Down, 1, 1, Direction.Left),
+        (2, 1, Direction.Up, 1, 0, Direction.Right),
+        (2, 1, Direction.Right, 1, 3, Direction.Right),
+        (2, 1, Direction.Down, 1, 2, Direction.Right),
+    }),
+    (new int[,]
+    {
+        { 1, 1, 0 },
+        { 0, 1, 0 },
+        { 0, 1, 1 },
+        { 0, 1, 0 },
+    }, new List<(int, int, Direction, int, int, Direction)> {
+        (1, 0, Direction.Up, 1, 3, Direction.Down),
+        (0, 0, Direction.Left, 1, 2, Direction.Left),
+        (0, 0, Direction.Up, 1, 3, Direction.Left),
+        (0, 0, Direction.Down, 1, 1, Direction.Left),
+        (2, 2, Direction.Up, 1, 1, Direction.Right),
+        (2, 2, Direction.Right, 1, 0, Direction.Right),
+        (2, 2, Direction.Down, 1, 3, Direction.Right),
+    }),
+    (new int[,]
+    {
+        { 1, 1, 0 },
+        { 0, 1, 0 },
+        { 0, 1, 0 },
+        { 0, 1, 1 },
+    }, new List<(int, int, Direction, int, int, Direction)> {
+        (1, 0, Direction.Up, 1, 3, Direction.Down),
+        (0, 0, Direction.Left, 1, 2, Direction.Left),
+        (0, 0, Direction.Up, 1, 3, Direction.Left),
+        (0, 0, Direction.Down, 1, 1, Direction.Left),
+        (2, 3, Direction.Up, 1, 2, Direction.Right),
+        (2, 3, Direction.Right, 1, 1, Direction.Right),
+        (2, 3, Direction.Down, 1, 0, Direction.Right),
+    }),
+    (new int[,]
+    {
+        { 1, 0, 0 },
+        { 1, 1, 1 },
+        { 0, 1, 0 },
+        { 0, 1, 0 },
+    }, new List<(int, int, Direction, int, int, Direction)> {
+        (0, 0, Direction.Left, 1, 3, Direction.Down),
+        (0, 0, Direction.Right, 1, 1, Direction.Up),
+        (0, 0, Direction.Up, 2, 1, Direction.Up),
+        (0, 1, Direction.Left, 1, 3, Direction.Left),
+        (0, 1, Direction.Down, 1, 2, Direction.Left),
+        (2, 1, Direction.Right, 1, 3, Direction.Right),
+        (2, 1, Direction.Down, 1, 2, Direction.Right),
+    }),
+    (new int[,]
+    {
+        { 1, 0, 0 },
+        { 1, 1, 0 },
+        { 0, 1, 1 },
+        { 0, 1, 0 },
+    }, new List<(int, int, Direction, int, int, Direction)> {
+        (0, 0, Direction.Right, 1, 1, Direction.Up),
+        (0, 0, Direction.Up, 2, 2, Direction.Right),
+        (0, 0, Direction.Left, 1, 3, Direction.Down),
+        (1, 1, Direction.Right, 2, 2, Direction.Up),
+        (2, 2, Direction.Down, 1, 3, Direction.Right),
+        (1, 3, Direction.Left, 0, 1, Direction.Left),
+        (0, 1, Direction.Down, 1, 2, Direction.Left),
+    }),
+    (new int[,]
+    {
+        { 1, 0, 0 },
+        { 1, 1, 0 },
+        { 0, 1, 0 },
+        { 0, 1, 1 },
+    }, new List<(int, int, Direction, int, int, Direction)> {
+        (0, 0, Direction.Right, 1, 1, Direction.Up),
+        (0, 0, Direction.Up, 2, 3, Direction.Down),
+        (0, 0, Direction.Left, 1, 3, Direction.Down),
+        (0, 1, Direction.Left, 1, 3, Direction.Left),
+        (0, 1, Direction.Down, 1, 2, Direction.Left),
+        (1, 1, Direction.Right, 2, 3, Direction.Right),
+        (1, 2, Direction.Right, 2, 3, Direction.Up),
+    }),
+    (new int[,]
+    {
+        { 1, 0, 0 },
+        { 1, 1, 0 },
+        { 0, 1, 1 },
+        { 0, 0, 1 },
+    }, new List<(int, int, Direction, int, int, Direction)> {
+        (0, 0, Direction.Left, 2, 3, Direction.Right),
+        (0, 0, Direction.Up, 2, 2, Direction.Right),
+        (0, 0, Direction.Right, 1, 1, Direction.Up),
+        (1, 1, Direction.Right, 2, 2, Direction.Up),
+        (2, 3, Direction.Down, 0, 1, Direction.Left),
+        (2, 3, Direction.Left, 1, 2, Direction.Down),
+        (1, 2, Direction.Left, 0, 1, Direction.Down),
+    }),
+    (new int[,]
+    {
+        { 0, 1, 0 },
+        { 1, 1, 1 },
+        { 0, 1, 0 },
+        { 0, 1, 0 },
+    }, new List<(int, int, Direction, int, int, Direction)> {
+        (1, 0, Direction.Left, 0, 1, Direction.Up),
+        (1, 0, Direction.Up, 1, 3, Direction.Down),
+        (1, 0, Direction.Right, 2, 1, Direction.Up),
+        (0, 1, Direction.Left, 1, 3, Direction.Left),
+        (2, 1, Direction.Right, 1, 3, Direction.Right),
+        (0, 1, Direction.Down, 1, 2, Direction.Left),
+        (2, 1, Direction.Down, 1, 2, Direction.Right),
+    }),
+    (new int[,]
+    {
+        { 0, 1, 0 },
+        { 1, 1, 0 },
+        { 0, 1, 1 },
+        { 0, 1, 0 },
+    }, new List<(int, int, Direction, int, int, Direction)> {
+        (1, 0, Direction.Left, 0, 1, Direction.Up),
+        (1, 0, Direction.Up, 1, 3, Direction.Down),
+        (1, 0, Direction.Right, 2, 2, Direction.Right),
+        (0, 1, Direction.Left, 1, 3, Direction.Left),
+        (0, 1, Direction.Down, 1, 2, Direction.Left),
+        (2, 2, Direction.Down, 1, 3, Direction.Right),
+        (2, 2, Direction.Up, 1, 1, Direction.Left),
+    }),
+    (new int[,]
+    {
+        { 1, 0 },
+        { 1, 0 },
+        { 1, 1 },
+        { 0, 1 },
+        { 0, 1 },
+    }, new List<(int, int, Direction, int, int, Direction)> {
+        (0, 0, Direction.Right, 1, 2, Direction.Right),
+        (0, 0, Direction.Up, 1, 3, Direction.Right),
+        (0, 0, Direction.Left, 1, 4, Direction.Right),
+        (0, 1, Direction.Right, 1, 2, Direction.Up),
+        (0, 1, Direction.Left, 1, 4, Direction.Down),
+        (0, 2, Direction.Left, 1, 4, Direction.Left),
+        (0, 2, Direction.Down, 1, 3, Direction.Left),
+    }),
 });
-#else
-relations.AddRange(new List<(Side, Direction, Side, Direction)>()
-{
-    (Sides[(1,1)], Direction.Left, Sides[(0,2)], Direction.Up),
-    (Sides[(1,1)], Direction.Right, Sides[(2,0)], Direction.Down),
-    (Sides[(1,2)], Direction.Right, Sides[(2,0)], Direction.Right),
-    (Sides[(0,3)], Direction.Right, Sides[(1,2)], Direction.Down),
-    (Sides[(0,2)], Direction.Left, Sides[(1,0)], Direction.Left),
-    (Sides[(0,3)], Direction.Left, Sides[(1,0)], Direction.Up),
-    (Sides[(0,3)], Direction.Down, Sides[(2,0)], Direction.Up),
-});
-#endif
 
-// Preprocess the complex part 2 wrapping which requires knowledge of the input
+// Compare with valid cubes to get the rest of the relations from the valid cube nets list
+(int[,], List<(int, int, Direction, int, int, Direction)>)? match = null;
+for (int j = 0; j < validCubeNets.Count; j++)
+{
+    // For each of the valid cubes, produce a flipped version
+    // Then take all 4 rotations of both the original and the flipped
+    // Compare the input with all 8 possibilities
+    (int[,] originalCubeNet, List<(int, int, Direction, int, int, Direction)> originalRelations) = validCubeNets[j];
+
+    List<(int[,], List<(int, int, Direction, int, int, Direction)>)> versions = new();
+
+    int[,] flippedOriginalCubeNet = new int[originalCubeNet.GetLength(0), originalCubeNet.GetLength(1)];
+    for (int y = 0; y < flippedOriginalCubeNet.GetLength(0); y++)
+    {
+        for (int x = 0; x < flippedOriginalCubeNet.GetLength(1); x++)
+        {
+            flippedOriginalCubeNet[y, x] = originalCubeNet[y, flippedOriginalCubeNet.GetLength(1) - 1 - x];
+        }
+    }
+    List<(int, int, Direction, int, int, Direction)> flippedOriginalRelations = new();
+    foreach ((int s1x, int s1y, Direction s1d, int s2x, int s2y, Direction s2d) in originalRelations)
+    {
+        Direction newS1d = s1d;
+        if (newS1d == Direction.Left)
+            newS1d = Direction.Right;
+        else if (newS1d == Direction.Right)
+            newS1d = Direction.Left;
+
+        Direction newS2d = s2d;
+        if (newS2d == Direction.Left)
+            newS2d = Direction.Right;
+        else if (newS2d == Direction.Right)
+            newS2d = Direction.Left;
+
+        flippedOriginalRelations.Add((flippedOriginalCubeNet.GetLength(1) - 1 - s1x, s1y, newS1d, flippedOriginalCubeNet.GetLength(1) - 1 - s2x, s2y, newS2d));
+    }
+
+    versions.Add((originalCubeNet, originalRelations));
+    versions.Add((flippedOriginalCubeNet, flippedOriginalRelations));
+
+    int[,] rotOriginal = originalCubeNet;
+    int[,] rotFlipped = flippedOriginalCubeNet;
+    List<(int, int, Direction, int, int, Direction)> rotOriginalRelations = originalRelations;
+    List<(int, int, Direction, int, int, Direction)> rotFlippedRelations = flippedOriginalRelations;
+    for (int i = 0; i < 3; i++)
+    {
+        int[,] newRotOriginal = new int[rotOriginal.GetLength(1), rotOriginal.GetLength(0)];
+        int[,] newRotFlipped = new int[rotFlipped.GetLength(1), rotFlipped.GetLength(0)];
+        for (int y = 0; y < rotOriginal.GetLength(0); y++)
+        {
+            for (int x = 0; x < rotFlipped.GetLength(1); x++)
+            {
+                newRotOriginal[x, rotOriginal.GetLength(0) - y - 1] = rotOriginal[y, x];
+                newRotFlipped[x, rotFlipped.GetLength(0) - y - 1] = rotFlipped[y, x];
+            }
+        }
+
+        List<(int, int, Direction, int, int, Direction)> newRotOriginalRelations = new List<(int, int, Direction, int, int, Direction)>();
+        foreach ((int s1x, int s1y, Direction s1d, int s2x, int s2y, Direction s2d) in rotOriginalRelations)
+        {
+            Direction newS1d = (Direction)((int)s1d + 1);
+            if ((int)newS1d == 4) newS1d = (Direction)0;
+            else if ((int)newS1d == -1) newS1d = (Direction)3;
+
+            Direction newS2d = (Direction)((int)s2d + 1);
+            if ((int)newS2d == 4) newS2d = (Direction)0;
+            else if ((int)newS2d == -1) newS2d = (Direction)3;
+
+            newRotOriginalRelations.Add((rotOriginal.GetLength(0) - s1y - 1, s1x, newS1d, rotOriginal.GetLength(0) - s2y - 1, s2x, newS2d));
+        }
+        List<(int, int, Direction, int, int, Direction)> newRotFlippedRelations = new List<(int, int, Direction, int, int, Direction)>();
+        foreach ((int s1x, int s1y, Direction s1d, int s2x, int s2y, Direction s2d) in rotFlippedRelations)
+        {
+            Direction newS1d = (Direction)((int)s1d + 1);
+            if ((int)newS1d == 4) newS1d = (Direction)0;
+            else if ((int)newS1d == -1) newS1d = (Direction)3;
+
+            Direction newS2d = (Direction)((int)s2d + 1);
+            if ((int)newS2d == 4) newS2d = (Direction)0;
+            else if ((int)newS2d == -1) newS2d = (Direction)3;
+
+            newRotFlippedRelations.Add((rotFlipped.GetLength(0) - s1y - 1, s1x, newS1d, rotFlipped.GetLength(0) - s2y - 1, s2x, newS2d));
+        }
+
+        rotOriginal = newRotOriginal;
+        rotFlipped = newRotFlipped;
+        rotOriginalRelations = newRotOriginalRelations;
+        rotFlippedRelations = newRotFlippedRelations;
+
+        versions.Add((rotOriginal, rotOriginalRelations));
+        versions.Add((rotFlipped, rotFlippedRelations));
+    }
+
+    for (int i = 0; i < versions.Count; i++)
+    {
+        (int[,] versionCubeNet, List<(int, int, Direction, int, int, Direction)> versionRelations) = versions[i];
+        bool versionMatch = true;
+        for (int y = 0; y < versionCubeNet.GetLength(0); y++)
+        {
+            for (int x = 0; x < versionCubeNet.GetLength(1); x++)
+            {
+                if (
+                    (versionCubeNet[y, x] == 1 && !Sides.ContainsKey((x, y))) ||
+                    (versionCubeNet[y, x] == 0 && Sides.ContainsKey((x, y)))
+                    )
+                {
+                    versionMatch = false;
+                    break;
+                }
+            }
+            if (!versionMatch) break;
+        }
+        if (versionMatch)
+        {
+            match = versions[i];
+            break;
+        }
+    }
+    if (match != null)
+        break;
+}
+
+if (match == null)
+    throw new Exception("Invalid cube");
+
+var tmp = (((int[,], List<(int, int, Direction, int, int, Direction)>))match).Item2;
+foreach ((int s1x, int s1y, Direction s1d, int s2x, int s2y, Direction s2d) in tmp)
+{
+    relations.Add((Sides[(s1x, s1y)], s1d, Sides[(s2x, s2y)], s2d));
+}
+
+// Preprocess the complex part 2 wrapping relations
 foreach ((Side sideA, Direction sideASide, Side sideB, Direction sideBSide) in relations)
 {
     Side side1;
@@ -257,8 +542,9 @@ foreach ((Side sideA, Direction sideASide, Side sideB, Direction sideBSide) in r
             side1.P2WrapKey[target1] = (side2, i, 0, Direction.Down);
             side2.P2WrapKey[target2] = (side1, i, Side.Dim - 1, Direction.Up);
         }
-        else
-            throw new Exception();
+
+
+        else throw new Exception();
     }
 }
 
@@ -421,15 +707,5 @@ public class Side
     public override string ToString()
     {
         return $"{X},{Y}";
-    }
-}
-
-public class BasicSide
-{
-    public Dictionary<Direction, BasicSide> AdjacentSides = new Dictionary<Direction, BasicSide>();
-
-    public BasicSide()
-    {
-
     }
 }
