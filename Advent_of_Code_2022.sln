@@ -51,6 +51,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_21_Monkey_Math", "Day_2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_22_Monkey_Map", "Day_22_Monkey_Map\Day_22_Monkey_Map.csproj", "{4EB55A03-AEB5-4FD9-A5D2-CF6EA2FD18F3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_23_Unstable_Diffusion", "Day_23_Unstable_Diffusion\Day_23_Unstable_Diffusion.csproj", "{402D60E3-B935-44D1-895D-50D1C1EB0983}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,6 +155,10 @@ Global
 		{4EB55A03-AEB5-4FD9-A5D2-CF6EA2FD18F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EB55A03-AEB5-4FD9-A5D2-CF6EA2FD18F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EB55A03-AEB5-4FD9-A5D2-CF6EA2FD18F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{402D60E3-B935-44D1-895D-50D1C1EB0983}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{402D60E3-B935-44D1-895D-50D1C1EB0983}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{402D60E3-B935-44D1-895D-50D1C1EB0983}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{402D60E3-B935-44D1-895D-50D1C1EB0983}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
