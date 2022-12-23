@@ -139,6 +139,8 @@ void P2()
     unvisitedValves.Remove("AA");
     HashSet<string> unvisitedValvesCopy = new HashSet<string>(unvisitedValves);
     int maxRelease = 0;
+    int maxYRelease = 0;
+    int maxERelease = 0;
     List<Valve> bestYPath = new List<Valve>();
     List<Valve> bestEPath = new List<Valve>();
     List<(List<Valve>, HashSet<string>, int)> paths = recurseList(unvisitedValves: unvisitedValvesCopy, minutesRemaining: 26, currentValve: Valve.Valves["AA"]);
@@ -170,6 +172,8 @@ void P2()
                         if (trial > maxRelease)
                         {
                             maxRelease = trial;
+                            maxYRelease = yRelease;
+                            maxERelease = eRelease;
                             bestYPath = yPath;
                             bestEPath = ePath;
                         }
@@ -181,7 +185,9 @@ void P2()
     bestYPath.Insert(0, Valve.Valves["AA"]);
     bestEPath.Insert(0, Valve.Valves["AA"]);
     //Console.WriteLine(string.Join(", ", bestYPath));
+    //Console.WriteLine(maxYRelease);
     //Console.WriteLine(string.Join(", ", bestEPath));
+    //Console.WriteLine(maxERelease);
     Console.WriteLine(maxRelease);
     Console.ReadLine();
 }
