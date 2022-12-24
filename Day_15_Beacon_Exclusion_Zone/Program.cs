@@ -2,7 +2,7 @@
 using AdventOfCodeUtilities;
 using System.Text.RegularExpressions;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 List<Sensor> Sensors = inputList.Select(x => new Sensor(x)).ToList();
 
 void P1()

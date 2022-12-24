@@ -4,7 +4,7 @@ using AdventOfCodeUtilities;
 using System;
 using System.Text.RegularExpressions;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 List<Direction> Jets = inputList[0].Select(x => (Direction)x).ToList();
 int NextJetNum = 0;
 

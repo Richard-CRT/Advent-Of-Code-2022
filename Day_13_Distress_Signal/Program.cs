@@ -3,7 +3,7 @@
 using AdventOfCodeUtilities;
 using System.Text.RegularExpressions;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 List<(Packet, Packet)> Pairs = new List<(Packet, Packet)>();
 List<Packet> Packets = new List<Packet>();
 for (int i = 0; i < inputList.Count; i += 3)

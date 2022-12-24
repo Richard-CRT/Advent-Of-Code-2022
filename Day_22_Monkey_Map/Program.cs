@@ -8,14 +8,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text.RegularExpressions;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 
 int emptyLineIndex = inputList.IndexOf("");
 
 string sInstructions = inputList[emptyLineIndex + 1];
 List<int> Distances = new List<int>();
 List<int> Turns = new List<int>();
-MatchCollection mc = AoCUtilities.RegexMatch(sInstructions, @"(\d+|R|L)");
+MatchCollection mc = AoC.RegexMatch(sInstructions, @"(\d+|R|L)");
 foreach (Match m in mc)
 {
     string s = m.Groups[1].Value;

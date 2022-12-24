@@ -1,6 +1,6 @@
 ﻿using AdventOfCodeUtilities;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 List<int> elfTotals = new List<int>();
 int runningTotal = 0;
 foreach (string str in inputList)

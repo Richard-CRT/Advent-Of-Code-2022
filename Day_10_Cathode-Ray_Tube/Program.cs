@@ -3,7 +3,7 @@
 using AdventOfCodeUtilities;
 using System.Text.RegularExpressions;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 List<Instruction> Instructions = inputList.Select(x => new Instruction(x)).ToList();
 void P1()
 {

@@ -2,7 +2,7 @@
 using System.Numerics;
 using System.Security.Cryptography.X509Certificates;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 Blueprint[] Blueprints = inputList.Select(x => new Blueprint(x)).ToArray();
 
 int recurse(ref int MaxGeodesOverall, Dictionary<(int, string), int> Cache, Blueprint blueprint, int maxMinutes, int minute, Stats stats)

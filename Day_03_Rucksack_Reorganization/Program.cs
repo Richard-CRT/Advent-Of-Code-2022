@@ -1,7 +1,7 @@
 ﻿using AdventOfCodeUtilities;
 using System.Diagnostics;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 List<Rucksack> Rucksacks = inputList.Select(s => new Rucksack(s)).ToList();
 
 void P1()

@@ -3,7 +3,7 @@
 using AdventOfCodeUtilities;
 using System.Text.RegularExpressions;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 Dictionary<(int, int), Cell> Map = new Dictionary<(int, int), Cell>();
 int RockMaxY = int.MinValue;
 foreach (string s in inputList)

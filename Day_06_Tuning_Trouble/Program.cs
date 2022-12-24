@@ -1,6 +1,6 @@
 ﻿using AdventOfCodeUtilities;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 
 void P1()
 {

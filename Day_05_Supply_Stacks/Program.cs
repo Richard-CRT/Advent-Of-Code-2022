@@ -1,6 +1,6 @@
 ﻿using AdventOfCodeUtilities;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 int stackCount = (inputList[0].Length + 1) / 4;
 List<Crate>[] Lists = new List<Crate>[stackCount];
 int i;

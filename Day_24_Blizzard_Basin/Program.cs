@@ -3,7 +3,7 @@
 using AdventOfCodeUtilities;
 using System.Text.RegularExpressions;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 
 Map map = new(inputList);
 HashSet<string> AllMapsCache = new();

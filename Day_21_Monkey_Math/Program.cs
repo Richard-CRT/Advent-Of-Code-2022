@@ -3,7 +3,7 @@
 using AdventOfCodeUtilities;
 using System.Text.RegularExpressions;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 List<Monkey> Monkeys = inputList.Select(m => new Monkey(m)).ToList();
 Monkeys.ForEach(m => m.Setup());
 Monkey RootMonkey = Monkey.AllMonkeys["root"];

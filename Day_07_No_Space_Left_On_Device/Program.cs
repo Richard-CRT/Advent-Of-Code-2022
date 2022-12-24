@@ -2,7 +2,7 @@
 
 using AdventOfCodeUtilities;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 
 Directory currentDirectory = Directory.RootDirectory;
 

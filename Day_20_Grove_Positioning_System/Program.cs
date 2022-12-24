@@ -2,7 +2,7 @@
 using System.Numerics;
 using System.Text.RegularExpressions;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 List<Node> Nodes = inputList.Select(x => new Node(x)).ToList();
 List<Node> Nodes2 = inputList.Select(x => new Node(x)).ToList();
 

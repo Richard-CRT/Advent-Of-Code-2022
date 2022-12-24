@@ -1,6 +1,6 @@
 ﻿using AdventOfCodeUtilities;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 int[,] Trees = new int[inputList.Count(), inputList[0].Length];
 bool[,] TreesSeen = new bool[inputList.Count(), inputList[0].Length];
 for (int y = 0; y < inputList.Count; y++)

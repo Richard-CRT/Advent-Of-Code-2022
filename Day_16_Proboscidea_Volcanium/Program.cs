@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 List<Valve> Valves = inputList.Select(x => Valve.Factory(x)).ToList();
 
 foreach (Valve startValve in Valves)

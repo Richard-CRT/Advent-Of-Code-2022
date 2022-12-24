@@ -3,7 +3,7 @@
 using AdventOfCodeUtilities;
 using System.Text.RegularExpressions;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 List<(int, int, int)> CubeList = new List<(int, int, int)>();
 HashSet<(int, int, int)> Cubes = new HashSet<(int, int, int)>(
     inputList.Select(x =>

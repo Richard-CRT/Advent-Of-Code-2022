@@ -3,8 +3,8 @@
 using AdventOfCodeUtilities;
 using System.Text.RegularExpressions;
 
-string input = AoCUtilities.GetInput();
-MatchCollection monkeyMatches = AoCUtilities.RegexMatch(input, @"Monkey (\d+):[^:]+:([\d, ]*)[^=]+= ([a-z\d]+) ([+*]) ([a-z\d]+)\W+Test: divisible by (\d+)\D+(\d+)\D+(\d+)");
+string input = AoC.GetInput();
+MatchCollection monkeyMatches = AoC.RegexMatch(input, @"Monkey (\d+):[^:]+:([\d, ]*)[^=]+= ([a-z\d]+) ([+*]) ([a-z\d]+)\W+Test: divisible by (\d+)\D+(\d+)\D+(\d+)");
 List<Monkey> Monkeys = monkeyMatches.Select(m => new Monkey(m)).ToList();
 
 void P1()
@@ -37,22 +37,6 @@ P2();
 
 public class Monkey
 {
-    private static int Gfc(int a, int b)
-    {
-        while (b != 0)
-        {
-            int temp = b;
-            b = a % b;
-            a = temp;
-        }
-        return a;
-    }
-
-    private static int Lcm(int a, int b)
-    {
-        return (a / Gfc(a, b)) * b;
-    }
-
     public static Dictionary<int, Monkey> MonkeyMap = new Dictionary<int, Monkey>();
     public static int LowestCommonDivisor = 1;
 
@@ -93,7 +77,7 @@ public class Monkey
                 Operation = new Func<Int64, Int64>(x => Int64.Parse(operationOperand1) * Int64.Parse(operationOperand2));
         DivisbleTestNum = int.Parse(match.Groups[6].Value);
         // This is actually overcomplicated - LCM of a set of primes is just the product
-        Monkey.LowestCommonDivisor = Monkey.Lcm(Monkey.LowestCommonDivisor, DivisbleTestNum);
+        Monkey.LowestCommonDivisor = AoC.LCM(Monkey.LowestCommonDivisor, DivisbleTestNum);
         TrueMonkeyId = int.Parse(match.Groups[7].Value);
         FalseMonkeyId = int.Parse(match.Groups[8].Value);
     }

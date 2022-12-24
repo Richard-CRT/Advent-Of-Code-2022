@@ -1,7 +1,7 @@
 ﻿using AdventOfCodeUtilities;
 using System.Text.RegularExpressions;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 List<(char, int)> Instructions = inputList.Select(s => { string[] split = s.Split(' '); return (split[0][0], int.Parse(split[1])); }).ToList();
 
 void P1()

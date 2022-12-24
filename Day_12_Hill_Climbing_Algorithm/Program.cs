@@ -3,7 +3,7 @@
 using AdventOfCodeUtilities;
 using System.Text.RegularExpressions;
 
-List<string> inputList = AoCUtilities.GetInputLines();
+List<string> inputList = AoC.GetInputLines();
 int Height = inputList.Count;
 int Width = inputList[0].Length;
 Node[,] Map = new Node[Height, Width];
