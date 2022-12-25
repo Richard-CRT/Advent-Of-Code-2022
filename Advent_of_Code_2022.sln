@@ -55,6 +55,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_23_Unstable_Diffusion",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_24_Blizzard_Basin", "Day_24_Blizzard_Basin\Day_24_Blizzard_Basin.csproj", "{A4187EE2-69DD-4FEE-8034-EBB4DD178BAE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day_25_Full_of_Hot_Air", "Day_25_Full_of_Hot_Air\Day_25_Full_of_Hot_Air.csproj", "{07414201-3E73-4EDC-8BE5-55772E2F9506}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -165,6 +167,10 @@ Global
 		{A4187EE2-69DD-4FEE-8034-EBB4DD178BAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4187EE2-69DD-4FEE-8034-EBB4DD178BAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4187EE2-69DD-4FEE-8034-EBB4DD178BAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07414201-3E73-4EDC-8BE5-55772E2F9506}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07414201-3E73-4EDC-8BE5-55772E2F9506}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07414201-3E73-4EDC-8BE5-55772E2F9506}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07414201-3E73-4EDC-8BE5-55772E2F9506}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
