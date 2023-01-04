@@ -5,6 +5,7 @@
 using AdventOfCodeUtilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text.RegularExpressions;
 
@@ -18,13 +19,13 @@ List<int> Turns = new List<int>();
 MatchCollection mc = AoC.RegexMatch(sInstructions, @"(\d+|R|L)");
 foreach (Match m in mc)
 {
-    string s = m.Groups[1].Value;
-    if (s == "R")
+    string st = m.Groups[1].Value;
+    if (st == "R")
         Turns.Add(1);
-    else if (s == "L")
+    else if (st == "L")
         Turns.Add(-1);
     else
-        Distances.Add(int.Parse(s));
+        Distances.Add(int.Parse(st));
 }
 
 // Determine the side dimension
@@ -38,7 +39,7 @@ for (int i = 0; i < emptyLineIndex; i++)
 
 Dictionary<(int, int), Side> Sides = new Dictionary<(int, int), Side>();
 
-for (int yCoord = 0; yCoord < 6; yCoord++)
+for (int yCoord = 0; yCoord < emptyLineIndex; yCoord++)
 {
     int y = yCoord * Side.Dim;
     if (y + Side.Dim <= inputList.Count)
@@ -55,7 +56,7 @@ for (int yCoord = 0; yCoord < 6; yCoord++)
     }
 }
 
-// Preprocess the dumb part 1 wrapping
+// Preprocess the simple part 1 wrapping
 foreach (var kvp in Sides)
 {
     (int xCoord, int yCoord) = kvp.Key;
@@ -97,328 +98,297 @@ foreach (var kvp in Sides)
     }
 }
 
-List<(Side, Direction, Side, Direction)> relations = new List<(Side, Direction, Side, Direction)>();
-// Preprocess the easy part 2 wrappings where the adjacent sides are already there
-foreach (var kvp in Sides)
+void foldCube(Side s, char? previousInvariantAxis = null, (int, int, int)? bLCoord = null, (int, int, int)? bRCoord = null, (int, int, int)? tLCoord = null, (int, int, int)? tRCoord = null)
 {
-    (int xCoord, int yCoord) = kvp.Key;
-    Side side = kvp.Value;
+    s.BLCoord = bLCoord;
+    s.BRCoord = bRCoord;
+    s.TLCoord = tLCoord;
+    s.TRCoord = tRCoord;
 
-    if (Sides.ContainsKey((xCoord - 1, yCoord)))
-        relations.Add((side, Direction.Left, Sides[(xCoord - 1, yCoord)], Direction.Right));
+    if (s.InvariantAxis is null)
+    {
+        Debug.Assert(previousInvariantAxis is not null);
 
-    if (Sides.ContainsKey((xCoord + 1, yCoord)))
-        relations.Add((side, Direction.Right, Sides[(xCoord + 1, yCoord)], Direction.Left));
+        // At this point we must know 2 of the corner coordinates, which defines a unit line, and a unit line connects 2 faces
+        // it will be the face that ISN'T the previous invariant face
 
-    if (Sides.ContainsKey((xCoord, yCoord - 1)))
-        relations.Add((side, Direction.Up, Sides[(xCoord, yCoord - 1)], Direction.Down));
-
-    if (Sides.ContainsKey((xCoord, yCoord + 1)))
-        relations.Add((side, Direction.Down, Sides[(xCoord, yCoord + 1)], Direction.Up));
-}
-
-// Technically speaking the input cube net is the same for everyone
-// so not necessary to be completely agnostic to cube net
-List<(int[,], List<(int, int, Direction, int, int, Direction)>)> validCubeNets = new List<(int[,], List<(int, int, Direction, int, int, Direction)>)>();
-validCubeNets.AddRange(new List<(int[,], List<(int, int, Direction, int, int, Direction)>)>
-{
-    (new int[,]
-    {
-        { 1, 1, 1 },
-        { 0, 1, 0 },
-        { 0, 1, 0 },
-        { 0, 1, 0 },
-    }, new List<(int, int, Direction, int, int, Direction)> {
-        (1, 0, Direction.Up, 1, 3, Direction.Down),
-        (0, 0, Direction.Left, 1, 2, Direction.Left),
-        (2, 0, Direction.Right, 1, 2, Direction.Right),
-        (0, 0, Direction.Up, 1, 3, Direction.Left),
-        (2, 0, Direction.Up, 1, 3, Direction.Right),
-        (0, 0, Direction.Down, 1, 1, Direction.Left),
-        (2, 0, Direction.Down, 1, 1, Direction.Right),
-    }),
-    (new int[,]
-    {
-        { 1, 1, 0 },
-        { 0, 1, 1 },
-        { 0, 1, 0 },
-        { 0, 1, 0 },
-    }, new List<(int, int, Direction, int, int, Direction)> {
-        (1, 0, Direction.Up, 1, 3, Direction.Down),
-        (0, 0, Direction.Left, 1, 2, Direction.Left),
-        (0, 0, Direction.Up, 1, 3, Direction.Left),
-        (0, 0, Direction.Down, 1, 1, Direction.Left),
-        (2, 1, Direction.Up, 1, 0, Direction.Right),
-        (2, 1, Direction.Right, 1, 3, Direction.Right),
-        (2, 1, Direction.Down, 1, 2, Direction.Right),
-    }),
-    (new int[,]
-    {
-        { 1, 1, 0 },
-        { 0, 1, 0 },
-        { 0, 1, 1 },
-        { 0, 1, 0 },
-    }, new List<(int, int, Direction, int, int, Direction)> {
-        (1, 0, Direction.Up, 1, 3, Direction.Down),
-        (0, 0, Direction.Left, 1, 2, Direction.Left),
-        (0, 0, Direction.Up, 1, 3, Direction.Left),
-        (0, 0, Direction.Down, 1, 1, Direction.Left),
-        (2, 2, Direction.Up, 1, 1, Direction.Right),
-        (2, 2, Direction.Right, 1, 0, Direction.Right),
-        (2, 2, Direction.Down, 1, 3, Direction.Right),
-    }),
-    (new int[,]
-    {
-        { 1, 1, 0 },
-        { 0, 1, 0 },
-        { 0, 1, 0 },
-        { 0, 1, 1 },
-    }, new List<(int, int, Direction, int, int, Direction)> {
-        (1, 0, Direction.Up, 1, 3, Direction.Down),
-        (0, 0, Direction.Left, 1, 2, Direction.Left),
-        (0, 0, Direction.Up, 1, 3, Direction.Left),
-        (0, 0, Direction.Down, 1, 1, Direction.Left),
-        (2, 3, Direction.Up, 1, 2, Direction.Right),
-        (2, 3, Direction.Right, 1, 1, Direction.Right),
-        (2, 3, Direction.Down, 1, 0, Direction.Right),
-    }),
-    (new int[,]
-    {
-        { 1, 0, 0 },
-        { 1, 1, 1 },
-        { 0, 1, 0 },
-        { 0, 1, 0 },
-    }, new List<(int, int, Direction, int, int, Direction)> {
-        (0, 0, Direction.Left, 1, 3, Direction.Down),
-        (0, 0, Direction.Right, 1, 1, Direction.Up),
-        (0, 0, Direction.Up, 2, 1, Direction.Up),
-        (0, 1, Direction.Left, 1, 3, Direction.Left),
-        (0, 1, Direction.Down, 1, 2, Direction.Left),
-        (2, 1, Direction.Right, 1, 3, Direction.Right),
-        (2, 1, Direction.Down, 1, 2, Direction.Right),
-    }),
-    (new int[,]
-    {
-        { 1, 0, 0 },
-        { 1, 1, 0 },
-        { 0, 1, 1 },
-        { 0, 1, 0 },
-    }, new List<(int, int, Direction, int, int, Direction)> {
-        (0, 0, Direction.Right, 1, 1, Direction.Up),
-        (0, 0, Direction.Up, 2, 2, Direction.Right),
-        (0, 0, Direction.Left, 1, 3, Direction.Down),
-        (1, 1, Direction.Right, 2, 2, Direction.Up),
-        (2, 2, Direction.Down, 1, 3, Direction.Right),
-        (1, 3, Direction.Left, 0, 1, Direction.Left),
-        (0, 1, Direction.Down, 1, 2, Direction.Left),
-    }),
-    (new int[,]
-    {
-        { 1, 0, 0 },
-        { 1, 1, 0 },
-        { 0, 1, 0 },
-        { 0, 1, 1 },
-    }, new List<(int, int, Direction, int, int, Direction)> {
-        (0, 0, Direction.Right, 1, 1, Direction.Up),
-        (0, 0, Direction.Up, 2, 3, Direction.Down),
-        (0, 0, Direction.Left, 1, 3, Direction.Down),
-        (0, 1, Direction.Left, 1, 3, Direction.Left),
-        (0, 1, Direction.Down, 1, 2, Direction.Left),
-        (1, 1, Direction.Right, 2, 3, Direction.Right),
-        (1, 2, Direction.Right, 2, 3, Direction.Up),
-    }),
-    (new int[,]
-    {
-        { 1, 0, 0 },
-        { 1, 1, 0 },
-        { 0, 1, 1 },
-        { 0, 0, 1 },
-    }, new List<(int, int, Direction, int, int, Direction)> {
-        (0, 0, Direction.Left, 2, 3, Direction.Right),
-        (0, 0, Direction.Up, 2, 2, Direction.Right),
-        (0, 0, Direction.Right, 1, 1, Direction.Up),
-        (1, 1, Direction.Right, 2, 2, Direction.Up),
-        (2, 3, Direction.Down, 0, 1, Direction.Left),
-        (2, 3, Direction.Left, 1, 2, Direction.Down),
-        (1, 2, Direction.Left, 0, 1, Direction.Down),
-    }),
-    (new int[,]
-    {
-        { 0, 1, 0 },
-        { 1, 1, 1 },
-        { 0, 1, 0 },
-        { 0, 1, 0 },
-    }, new List<(int, int, Direction, int, int, Direction)> {
-        (1, 0, Direction.Left, 0, 1, Direction.Up),
-        (1, 0, Direction.Up, 1, 3, Direction.Down),
-        (1, 0, Direction.Right, 2, 1, Direction.Up),
-        (0, 1, Direction.Left, 1, 3, Direction.Left),
-        (2, 1, Direction.Right, 1, 3, Direction.Right),
-        (0, 1, Direction.Down, 1, 2, Direction.Left),
-        (2, 1, Direction.Down, 1, 2, Direction.Right),
-    }),
-    (new int[,]
-    {
-        { 0, 1, 0 },
-        { 1, 1, 0 },
-        { 0, 1, 1 },
-        { 0, 1, 0 },
-    }, new List<(int, int, Direction, int, int, Direction)> {
-        (1, 0, Direction.Left, 0, 1, Direction.Up),
-        (1, 0, Direction.Up, 1, 3, Direction.Down),
-        (1, 0, Direction.Right, 2, 2, Direction.Right),
-        (0, 1, Direction.Left, 1, 3, Direction.Left),
-        (0, 1, Direction.Down, 1, 2, Direction.Left),
-        (2, 2, Direction.Down, 1, 3, Direction.Right),
-        (2, 2, Direction.Up, 1, 1, Direction.Left),
-    }),
-    (new int[,]
-    {
-        { 1, 0 },
-        { 1, 0 },
-        { 1, 1 },
-        { 0, 1 },
-        { 0, 1 },
-    }, new List<(int, int, Direction, int, int, Direction)> {
-        (0, 0, Direction.Right, 1, 2, Direction.Right),
-        (0, 0, Direction.Up, 1, 3, Direction.Right),
-        (0, 0, Direction.Left, 1, 4, Direction.Right),
-        (0, 1, Direction.Right, 1, 2, Direction.Up),
-        (0, 1, Direction.Left, 1, 4, Direction.Down),
-        (0, 2, Direction.Left, 1, 4, Direction.Left),
-        (0, 2, Direction.Down, 1, 3, Direction.Left),
-    }),
-});
-
-// Compare with valid cubes to get the rest of the relations from the valid cube nets list
-(int[,], List<(int, int, Direction, int, int, Direction)>)? match = null;
-for (int j = 0; j < validCubeNets.Count; j++)
-{
-    // For each of the valid cubes, produce a flipped version
-    // Then take all 4 rotations of both the original and the flipped
-    // Compare the input with all 8 possibilities
-    (int[,] originalCubeNet, List<(int, int, Direction, int, int, Direction)> originalRelations) = validCubeNets[j];
-
-    List<(int[,], List<(int, int, Direction, int, int, Direction)>)> versions = new();
-
-    int[,] flippedOriginalCubeNet = new int[originalCubeNet.GetLength(0), originalCubeNet.GetLength(1)];
-    for (int y = 0; y < flippedOriginalCubeNet.GetLength(0); y++)
-    {
-        for (int x = 0; x < flippedOriginalCubeNet.GetLength(1); x++)
+        char? varyingAxis = null;
+        int knownCombination;
+        if (tLCoord is not null && tRCoord is not null)
         {
-            flippedOriginalCubeNet[y, x] = originalCubeNet[y, flippedOriginalCubeNet.GetLength(1) - 1 - x];
+            knownCombination = 0;
+            if (tLCoord.Value.Item1 != tRCoord.Value.Item1)
+                varyingAxis = 'x';
+            else if (tLCoord.Value.Item2 != tRCoord.Value.Item2)
+                varyingAxis = 'y';
+            else if (tLCoord.Value.Item3 != tRCoord.Value.Item3)
+                varyingAxis = 'z';
         }
-    }
-    List<(int, int, Direction, int, int, Direction)> flippedOriginalRelations = new();
-    foreach ((int s1x, int s1y, Direction s1d, int s2x, int s2y, Direction s2d) in originalRelations)
-    {
-        Direction newS1d = s1d;
-        if (newS1d == Direction.Left)
-            newS1d = Direction.Right;
-        else if (newS1d == Direction.Right)
-            newS1d = Direction.Left;
-
-        Direction newS2d = s2d;
-        if (newS2d == Direction.Left)
-            newS2d = Direction.Right;
-        else if (newS2d == Direction.Right)
-            newS2d = Direction.Left;
-
-        flippedOriginalRelations.Add((flippedOriginalCubeNet.GetLength(1) - 1 - s1x, s1y, newS1d, flippedOriginalCubeNet.GetLength(1) - 1 - s2x, s2y, newS2d));
-    }
-
-    versions.Add((originalCubeNet, originalRelations));
-    versions.Add((flippedOriginalCubeNet, flippedOriginalRelations));
-
-    int[,] rotOriginal = originalCubeNet;
-    int[,] rotFlipped = flippedOriginalCubeNet;
-    List<(int, int, Direction, int, int, Direction)> rotOriginalRelations = originalRelations;
-    List<(int, int, Direction, int, int, Direction)> rotFlippedRelations = flippedOriginalRelations;
-    for (int i = 0; i < 3; i++)
-    {
-        int[,] newRotOriginal = new int[rotOriginal.GetLength(1), rotOriginal.GetLength(0)];
-        int[,] newRotFlipped = new int[rotFlipped.GetLength(1), rotFlipped.GetLength(0)];
-        for (int y = 0; y < rotOriginal.GetLength(0); y++)
+        else if (tLCoord is not null && bLCoord is not null)
         {
-            for (int x = 0; x < rotFlipped.GetLength(1); x++)
-            {
-                newRotOriginal[x, rotOriginal.GetLength(0) - y - 1] = rotOriginal[y, x];
-                newRotFlipped[x, rotFlipped.GetLength(0) - y - 1] = rotFlipped[y, x];
-            }
+            knownCombination = 1;
+            if (tLCoord.Value.Item1 != bLCoord.Value.Item1)
+                varyingAxis = 'x';
+            else if (tLCoord.Value.Item2 != bLCoord.Value.Item2)
+                varyingAxis = 'y';
+            else if (tLCoord.Value.Item3 != bLCoord.Value.Item3)
+                varyingAxis = 'z';
+        }
+        else if (bLCoord is not null && bRCoord is not null)
+        {
+            knownCombination = 2;
+            if (bLCoord.Value.Item1 != bRCoord.Value.Item1)
+                varyingAxis = 'x';
+            else if (bLCoord.Value.Item2 != bRCoord.Value.Item2)
+                varyingAxis = 'y';
+            else if (bLCoord.Value.Item3 != bRCoord.Value.Item3)
+                varyingAxis = 'z';
+        }
+        else if (bRCoord is not null && tRCoord is not null)
+        {
+            knownCombination = 3;
+            if (bRCoord.Value.Item1 != tRCoord.Value.Item1)
+                varyingAxis = 'x';
+            else if (bRCoord.Value.Item2 != tRCoord.Value.Item2)
+                varyingAxis = 'y';
+            else if (bRCoord.Value.Item3 != tRCoord.Value.Item3)
+                varyingAxis = 'z';
+        }
+        else throw new Exception();
+
+        Debug.Assert(varyingAxis is not null);
+
+        char invariantAxis = (new char[] { 'x', 'y', 'z' }).Except(new char[] { (char)varyingAxis, (char)previousInvariantAxis }).First();
+        int invariantAxisVal;
+        (int, int, int)? tmp = (new List<(int, int, int)?> { bLCoord, bRCoord, tLCoord, tRCoord }).Find(c => c is not null);
+        Debug.Assert(tmp is not null);
+
+        switch (invariantAxis)
+        {
+            case 'x': invariantAxisVal = tmp.Value.Item1; break;
+            case 'y': invariantAxisVal = tmp.Value.Item2; break;
+            case 'z': invariantAxisVal = tmp.Value.Item3; break;
+            default: throw new Exception();
         }
 
-        List<(int, int, Direction, int, int, Direction)> newRotOriginalRelations = new List<(int, int, Direction, int, int, Direction)>();
-        foreach ((int s1x, int s1y, Direction s1d, int s2x, int s2y, Direction s2d) in rotOriginalRelations)
+        char toggleAxis = (new char[] { 'x', 'y', 'z' }).Except(new char[] { (char)varyingAxis, (char)invariantAxis }).First();
+        int toggleAxisVal;
+
+        switch (toggleAxis)
         {
-            Direction newS1d = (Direction)((int)s1d + 1);
-            if ((int)newS1d == 4) newS1d = (Direction)0;
-            else if ((int)newS1d == -1) newS1d = (Direction)3;
-
-            Direction newS2d = (Direction)((int)s2d + 1);
-            if ((int)newS2d == 4) newS2d = (Direction)0;
-            else if ((int)newS2d == -1) newS2d = (Direction)3;
-
-            newRotOriginalRelations.Add((rotOriginal.GetLength(0) - s1y - 1, s1x, newS1d, rotOriginal.GetLength(0) - s2y - 1, s2x, newS2d));
-        }
-        List<(int, int, Direction, int, int, Direction)> newRotFlippedRelations = new List<(int, int, Direction, int, int, Direction)>();
-        foreach ((int s1x, int s1y, Direction s1d, int s2x, int s2y, Direction s2d) in rotFlippedRelations)
-        {
-            Direction newS1d = (Direction)((int)s1d + 1);
-            if ((int)newS1d == 4) newS1d = (Direction)0;
-            else if ((int)newS1d == -1) newS1d = (Direction)3;
-
-            Direction newS2d = (Direction)((int)s2d + 1);
-            if ((int)newS2d == 4) newS2d = (Direction)0;
-            else if ((int)newS2d == -1) newS2d = (Direction)3;
-
-            newRotFlippedRelations.Add((rotFlipped.GetLength(0) - s1y - 1, s1x, newS1d, rotFlipped.GetLength(0) - s2y - 1, s2x, newS2d));
+            case 'x': toggleAxisVal = tmp.Value.Item1; break;
+            case 'y': toggleAxisVal = tmp.Value.Item2; break;
+            case 'z': toggleAxisVal = tmp.Value.Item3; break;
+            default: throw new Exception();
         }
 
-        rotOriginal = newRotOriginal;
-        rotFlipped = newRotFlipped;
-        rotOriginalRelations = newRotOriginalRelations;
-        rotFlippedRelations = newRotFlippedRelations;
+        int nToggleAxisVal = toggleAxisVal == 0 ? 1 : 0;
 
-        versions.Add((rotOriginal, rotOriginalRelations));
-        versions.Add((rotFlipped, rotFlippedRelations));
-    }
+        int val1x = -1;
+        int val1y = -1;
+        int val1z = -1;
+        int val2x = -1;
+        int val2y = -1;
+        int val2z = -1;
 
-    for (int i = 0; i < versions.Count; i++)
-    {
-        (int[,] versionCubeNet, List<(int, int, Direction, int, int, Direction)> versionRelations) = versions[i];
-        bool versionMatch = true;
-        for (int y = 0; y < versionCubeNet.GetLength(0); y++)
+        Debug.Assert(varyingAxis != toggleAxis && toggleAxis != invariantAxis && varyingAxis != invariantAxis);
+
+        switch (invariantAxis)
         {
-            for (int x = 0; x < versionCubeNet.GetLength(1); x++)
-            {
-                if (
-                    (versionCubeNet[y, x] == 1 && !Sides.ContainsKey((x, y))) ||
-                    (versionCubeNet[y, x] == 0 && Sides.ContainsKey((x, y)))
-                    )
+            case 'x': val1x = invariantAxisVal; val2x = invariantAxisVal; break;
+            case 'y': val1y = invariantAxisVal; val2y = invariantAxisVal; break;
+            case 'z': val1z = invariantAxisVal; val2z = invariantAxisVal; break;
+            default: throw new Exception();
+        }
+        switch (toggleAxis)
+        {
+            case 'x': val1x = nToggleAxisVal; val2x = nToggleAxisVal; break;
+            case 'y': val1y = nToggleAxisVal; val2y = nToggleAxisVal; break;
+            case 'z': val1z = nToggleAxisVal; val2z = nToggleAxisVal; break;
+            default: throw new Exception();
+        }
+        switch (varyingAxis)
+        {
+            case 'x':
+                switch (knownCombination)
                 {
-                    versionMatch = false;
-                    break;
+                    case 0:
+                        Debug.Assert(s.TLCoord is not null && s.TRCoord is not null);
+                        val1x = s.TLCoord.Value.Item1;
+                        val2x = s.TRCoord.Value.Item1;
+                        break;
+                    case 1:
+                        Debug.Assert(s.TLCoord is not null && s.BLCoord is not null);
+                        val1x = s.TLCoord.Value.Item1;
+                        val2x = s.BLCoord.Value.Item1;
+                        break;
+                    case 2:
+                        Debug.Assert(s.BLCoord is not null && s.BRCoord is not null);
+                        val1x = s.BLCoord.Value.Item1;
+                        val2x = s.BRCoord.Value.Item1;
+                        break;
+                    case 3:
+                        Debug.Assert(s.BRCoord is not null && s.TRCoord is not null);
+                        val1x = s.BRCoord.Value.Item1;
+                        val2x = s.TRCoord.Value.Item1;
+                        break;
+                    default: throw new Exception();
                 }
-            }
-            if (!versionMatch) break;
+                break;
+            case 'y':
+                switch (knownCombination)
+                {
+                    case 0:
+                        Debug.Assert(s.TLCoord is not null && s.TRCoord is not null);
+                        val1y = s.TLCoord.Value.Item2;
+                        val2y = s.TRCoord.Value.Item2;
+                        break;
+                    case 1:
+                        Debug.Assert(s.TLCoord is not null && s.BLCoord is not null);
+                        val1y = s.TLCoord.Value.Item2;
+                        val2y = s.BLCoord.Value.Item2;
+                        break;
+                    case 2:
+                        Debug.Assert(s.BLCoord is not null && s.BRCoord is not null);
+                        val1y = s.BLCoord.Value.Item2;
+                        val2y = s.BRCoord.Value.Item2;
+                        break;
+                    case 3:
+                        Debug.Assert(s.BRCoord is not null && s.TRCoord is not null);
+                        val1y = s.BRCoord.Value.Item2;
+                        val2y = s.TRCoord.Value.Item2;
+                        break;
+                    default: throw new Exception();
+                }
+                break;
+            case 'z':
+                switch (knownCombination)
+                {
+                    case 0:
+                        Debug.Assert(s.TLCoord is not null && s.TRCoord is not null);
+                        val1z = s.TLCoord.Value.Item3;
+                        val2z = s.TRCoord.Value.Item3;
+                        break;
+                    case 1:
+                        Debug.Assert(s.TLCoord is not null && s.BLCoord is not null);
+                        val1z = s.TLCoord.Value.Item3;
+                        val2z = s.BLCoord.Value.Item3;
+                        break;
+                    case 2:
+                        Debug.Assert(s.BLCoord is not null && s.BRCoord is not null);
+                        val1z = s.BLCoord.Value.Item3;
+                        val2z = s.BRCoord.Value.Item3;
+                        break;
+                    case 3:
+                        Debug.Assert(s.BRCoord is not null && s.TRCoord is not null);
+                        val1z = s.BRCoord.Value.Item3;
+                        val2z = s.TRCoord.Value.Item3;
+                        break;
+                    default: throw new Exception();
+                }
+                break;
+            default: throw new Exception();
         }
-        if (versionMatch)
+
+        switch (knownCombination)
         {
-            match = versions[i];
-            break;
+            case 0:
+                s.BLCoord = (val1x, val1y, val1z);
+                s.BRCoord = (val2x, val2y, val2z);
+                break;
+            case 1:
+                s.TRCoord = (val1x, val1y, val1z);
+                s.BRCoord = (val2x, val2y, val2z);
+                break;
+            case 2:
+                s.TLCoord = (val1x, val1y, val1z);
+                s.TRCoord = (val2x, val2y, val2z);
+                break;
+            case 3:
+                s.BLCoord = (val1x, val1y, val1z);
+                s.TLCoord = (val2x, val2y, val2z);
+                break;
+            default: throw new Exception();
         }
+
+        s.CornersDefined = true;
     }
-    if (match != null)
-        break;
+
+    (int, int) leftSideCoord = (s.X - 1, s.Y);
+    (int, int) rightSideCoord = (s.X + 1, s.Y);
+    (int, int) upSideCoord = (s.X, s.Y - 1);
+    (int, int) downSideCoord = (s.X, s.Y + 1);
+
+    if (Sides.ContainsKey(leftSideCoord) && !Sides[leftSideCoord].CornersDefined)
+        foldCube(Sides[leftSideCoord], previousInvariantAxis: s.InvariantAxis, tRCoord: s.TLCoord, bRCoord: s.BLCoord);
+    if (Sides.ContainsKey(rightSideCoord) && !Sides[rightSideCoord].CornersDefined)
+        foldCube(Sides[rightSideCoord], previousInvariantAxis: s.InvariantAxis, tLCoord: s.TRCoord, bLCoord: s.BRCoord);
+    if (Sides.ContainsKey(upSideCoord) && !Sides[upSideCoord].CornersDefined)
+        foldCube(Sides[upSideCoord], previousInvariantAxis: s.InvariantAxis, bLCoord: s.TLCoord, bRCoord: s.TRCoord);
+    if (Sides.ContainsKey(downSideCoord) && !Sides[downSideCoord].CornersDefined)
+        foldCube(Sides[downSideCoord], previousInvariantAxis: s.InvariantAxis, tLCoord: s.BLCoord, tRCoord: s.BRCoord);
 }
 
-if (match == null)
-    throw new Exception("Invalid cube");
+Side s = Sides.Values.ToArray().First();
+foldCube(s, tLCoord: (0, 1, 0), tRCoord: (1, 1, 0), bLCoord: (0, 0, 0), bRCoord: (1, 0, 0));
 
-var tmp = (((int[,], List<(int, int, Direction, int, int, Direction)>))match).Item2;
-foreach ((int s1x, int s1y, Direction s1d, int s2x, int s2y, Direction s2d) in tmp)
+Direction? checkS2((int, int, int) s1_1, (int, int, int) s1_2, Side s2)
 {
-    relations.Add((Sides[(s1x, s1y)], s1d, Sides[(s2x, s2y)], s2d));
+    if (
+        (s1_1 == s2.TLCoord && s1_2 == s2.TRCoord) ||
+        (s1_1 == s2.TRCoord && s1_2 == s2.TLCoord))
+    {
+        return Direction.Up;
+    }
+    else if (
+        (s1_1 == s2.BLCoord && s1_2 == s2.TLCoord) ||
+        (s1_1 == s2.TLCoord && s1_2 == s2.BLCoord))
+    {
+        return Direction.Left;
+    }
+    else if (
+        (s1_1 == s2.BLCoord && s1_2 == s2.BRCoord) ||
+        (s1_1 == s2.BRCoord && s1_2 == s2.BLCoord))
+    {
+        return Direction.Down;
+    }
+    else if (
+        (s1_1 == s2.BRCoord && s1_2 == s2.TRCoord) ||
+        (s1_1 == s2.TRCoord && s1_2 == s2.BRCoord))
+    {
+        return Direction.Right;
+    }
+    return null;
+}
+
+List<(Side, Direction, Side, Direction)> relations = new List<(Side, Direction, Side, Direction)>();
+
+foreach (Side s1 in Sides.Values)
+{
+    foreach (Side s2 in Sides.Values)
+    {
+        if (s1 != s2)
+        {
+            // If we already have a relation between 2 sides don't both looking for another
+            if (relations.FindIndex(t => (s1 == t.Item1 && s2 == t.Item3) || (s2 == t.Item1 && s1 == t.Item3)) == -1)
+            {
+                Direction? d;
+                Debug.Assert(s1.BLCoord is not null && s1.BRCoord is not null && s1.TLCoord is not null && s1.TRCoord is not null);
+                d = checkS2(s1.BLCoord.Value, s1.BRCoord.Value, s2);
+                if (d is not null)
+                    relations.Add((s1, Direction.Down, s2, (Direction)d));
+                d = checkS2(s1.TRCoord.Value, s1.BRCoord.Value, s2);
+                if (d is not null)
+                    relations.Add((s1, Direction.Right, s2, (Direction)d));
+                d = checkS2(s1.TLCoord.Value, s1.TRCoord.Value, s2);
+                if (d is not null)
+                    relations.Add((s1, Direction.Up, s2, (Direction)d));
+                d = checkS2(s1.TLCoord.Value, s1.BLCoord.Value, s2);
+                if (d is not null)
+                    relations.Add((s1, Direction.Left, s2, (Direction)d));
+            }
+        }
+    }
 }
 
 // Preprocess the complex part 2 wrapping relations
@@ -550,7 +520,7 @@ foreach ((Side sideA, Direction sideASide, Side sideB, Direction sideBSide) in r
 
 void P1_2(int p)
 {
-    Side currentSide = Sides[(2, 0)];
+    Side currentSide = Sides.Values.First();
     int x = 0;
     int y = 0;
     Direction direction = Direction.Right;
@@ -620,7 +590,7 @@ void P1_2(int p)
     Console.ReadLine();
 }
 
-P1_2(1);
+//P1_2(1);
 P1_2(2);
 
 public enum Direction
@@ -640,6 +610,29 @@ public enum Cell
 
 public class Side
 {
+    public (int, int, int)? TLCoord;
+    public (int, int, int)? TRCoord;
+    public (int, int, int)? BLCoord;
+    public (int, int, int)? BRCoord;
+    public bool CornersDefined = false;
+
+    public char? InvariantAxis
+    {
+        get
+        {
+            if (TLCoord is null || TRCoord is null || BLCoord == null || BRCoord is null)
+                return null;
+            if (BLCoord.Value.Item1 == BRCoord.Value.Item1 && BRCoord.Value.Item1 == TLCoord.Value.Item1 && TLCoord.Value.Item1 == TRCoord.Value.Item1)
+                return 'x';
+            else if (BLCoord.Value.Item2 == BRCoord.Value.Item2 && BRCoord.Value.Item2 == TLCoord.Value.Item2 && TLCoord.Value.Item2 == TRCoord.Value.Item2)
+                return 'y';
+            else if (BLCoord.Value.Item3 == BRCoord.Value.Item3 && BRCoord.Value.Item3 == TLCoord.Value.Item3 && TLCoord.Value.Item3 == TRCoord.Value.Item3)
+                return 'z';
+            else
+                throw new Exception();
+        }
+    }
+
     public static int Dim;
 
     public int X;
